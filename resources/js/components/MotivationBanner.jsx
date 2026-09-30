@@ -58,7 +58,7 @@ export default function MotivationBanner({ user }) {
                     <div className="text-xs text-slate-200">
                         <span className="italic leading-relaxed">"{quote?.text}"</span>
                         <span className="text-[11px] text-slate-400 font-medium ml-2 block sm:inline">
-                            — {quote?.author}
+                            • {quote?.author}
                         </span>
                     </div>
                 </div>

@@ -48,7 +48,7 @@ export const MOTIVATIONAL_QUOTES = [
     { text: "Mastery demands patience and relentless revision.", author: "Robert Greene" },
     { text: "Little by little, one travels far.", author: "J.R.R. Tolkien" },
     { text: "Energy and persistence conquer all things.", author: "Benjamin Franklin" },
-    { text: "Your limitation—it's only your imagination.", author: "Unknown" },
+    { text: "Your limitation, it's only your imagination.", author: "Unknown" },
 ];
 
 export function getRandomQuote() {
