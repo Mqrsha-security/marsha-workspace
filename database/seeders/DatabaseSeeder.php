@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
             'identifier' => null,
             'role' => 'Security Architect',
             'avatar_color' => 'blue',
-            'password' => Hash::make('12345678'),
+            'password' => Hash::make('w7wfnWqY&5CuoGq8jKvZZ#pmf%Ps'),
         ]);
 
         User::create([
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             'identifier' => null,
             'role' => 'Project Manager',
             'avatar_color' => 'purple',
-            'password' => Hash::make('fdk321'),
+            'password' => Hash::make('9LBbTgCUY*byA8&Q$u6Z1!o2kbwC'),
         ]);
     }
 }

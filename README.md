@@ -14,8 +14,8 @@ Tabel akun terdaftar:
 
 | Nama Pengguna | Email Workspace | Kata Sandi | Peran |
 | :--- | :--- | :--- | :--- |
-| **Aditya Rahman** | `marshaSec@adit.ta` | `12345678` | Security Architect |
-| **Fahristi Dewi Khadijah** | `marshaSec@risti.ta` | `fdk321` | Project Manager |
+| **Aditya Rahman** | `marshaSec@adit.ta` | `w7wfnWqY&5CuoGq8jKvZZ#pmf%Ps` | Security Architect |
+| **Fahristi Dewi Khadijah** | `marshaSec@risti.ta` | `9LBbTgCUY*byA8&Q$u6Z1!o2kbwC` | Project Manager |
 
 ### Alur Masuk:
 1. Akses rute `/login`.
