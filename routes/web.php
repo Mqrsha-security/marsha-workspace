@@ -9,34 +9,21 @@ Route::get('/', function () {
 });
 
 Route::get('/debug-db', function () {
-    $results = [];
-    $host = env('DB_HOST');
-    $user = env('DB_USERNAME', 'neondb_owner');
-    $pass = env('DB_PASSWORD', 'npg_IUM4wa6SLfJF');
-    $endpoint = explode('.', $host)[0] ?? 'ep-rapid-hat-b4bz5jm0-pooler';
-    $endpointShort = str_replace('-pooler', '', $endpoint);
-
-    $attempts = [
-        'strategy_1_dbname_options_full' => "pgsql:host={$host};port=5432;dbname='neondb options=endpoint={$endpoint}';sslmode=require",
-        'strategy_2_dbname_options_short' => "pgsql:host={$host};port=5432;dbname='neondb options=endpoint={$endpointShort}';sslmode=require",
-        'strategy_3_raw_options_full' => "pgsql:host={$host};port=5432;dbname=neondb;options='endpoint={$endpoint}';sslmode=require",
-        'strategy_4_raw_options_short' => "pgsql:host={$host};port=5432;dbname=neondb;options='endpoint={$endpointShort}';sslmode=require",
-    ];
-
-    foreach ($attempts as $name => $dsn) {
-        try {
-            $pdo = new \PDO($dsn, $user, $pass, [
-                \PDO::ATTR_TIMEOUT => 5,
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-            ]);
-            $stmt = $pdo->query('SELECT current_user, current_database()');
-            $results[$name] = ['status' => 'SUCCESS', 'data' => $stmt->fetch(\PDO::FETCH_ASSOC)];
-        } catch (\Throwable $e) {
-            $results[$name] = ['status' => 'FAILED', 'error' => $e->getMessage()];
-        }
+    try {
+        $pdo = \Illuminate\Support\Facades\DB::connection()->getPdo();
+        $users = \Illuminate\Support\Facades\DB::table('users')->select('id', 'name', 'email', 'role')->get();
+        return response()->json([
+            'status' => 'SUCCESS',
+            'driver' => \Illuminate\Support\Facades\DB::connection()->getDriverName(),
+            'users' => $users,
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'FAILED',
+            'error' => $e->getMessage(),
+            'class' => get_class($e),
+        ], 500);
     }
-
-    return response()->json($results);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

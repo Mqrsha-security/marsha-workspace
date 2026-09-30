@@ -96,7 +96,18 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'sslmode' => (function () {
+                $base = env('DB_SSLMODE', 'prefer');
+                $host = env('DB_HOST', '');
+                if (str_contains($host, 'neon.tech')) {
+                    $endpoint = explode('.', $host)[0];
+                    return "require;options='endpoint={$endpoint}'";
+                }
+                return $base;
+            })(),
+            'options' => extension_loaded('pdo_pgsql') ? [
+                \PDO::ATTR_EMULATE_PREPARES => true,
+            ] : [],
         ],
 
         'sqlsrv' => [
