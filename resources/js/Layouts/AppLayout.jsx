@@ -1,5 +1,4 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -13,12 +12,11 @@ import {
     UserCheck,
     Send,
     LogOut,
-    Plus,
     LayoutDashboard,
     Users,
 } from 'lucide-react';
 
-export default function AppLayout({ children, currentScope = 'all', onOpenNewTask, counts = {}, currentNav = '' }) {
+export default function AppLayout({ children, currentScope = 'all', counts = {}, currentNav = '' }) {
     const { auth } = usePage().props;
     const user = auth.user;
 
@@ -92,19 +90,8 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                     </div>
                 </div>
 
-                {/* Primary Action Button */}
-                <div className="p-3">
-                    <Button
-                        onClick={onOpenNewTask}
-                        className="w-full bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white gap-2 text-xs font-medium h-8 shadow-xs"
-                    >
-                        <Plus className="h-3.5 w-3.5" />
-                        New Task
-                    </Button>
-                </div>
-
                 {/* Navigation Links */}
-                <nav className="flex-1 px-3 py-1 space-y-4 overflow-y-auto">
+                <nav className="flex-1 px-3 py-3 space-y-4 overflow-y-auto">
                     {/* Workspace */}
                     <div className="space-y-0.5">
                         <div className="px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">

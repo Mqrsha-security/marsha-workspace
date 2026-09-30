@@ -113,10 +113,6 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
         <AppLayout
             currentScope={filters.scope || 'all'}
             counts={counts}
-            onOpenNewTask={() => {
-                setEditingTask(null);
-                setIsCreateOpen(true);
-            }}
         >
             <Head title="Project Tasks" />
 
