@@ -44,7 +44,7 @@ export default function MotivationBanner({ user }) {
                     <div className="space-y-0.5">
                         <div className="text-xs uppercase tracking-wider font-semibold text-emerald-400 flex items-center gap-1.5">
                             <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                            Marsha Security Project Workspace
+                            Marsha Workspace
                         </div>
                         <h2 className="text-base sm:text-lg font-bold tracking-tight text-white">
                             Welcome back, {firstName}!

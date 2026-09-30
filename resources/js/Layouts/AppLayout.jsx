@@ -47,8 +47,8 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                             />
                         </div>
                         <div>
-                            <div className="text-xs font-bold tracking-tight text-slate-900 dark:text-slate-100">Marsha Security</div>
-                            <div className="text-[10px] text-slate-400">Project Workspace</div>
+                            <div className="text-xs font-bold tracking-tight text-slate-900 dark:text-slate-100">Marsha Workspace</div>
+                            <div className="text-[10px] text-slate-400">Security Engineering</div>
                         </div>
                     </div>
                     <ThemeToggle />
@@ -111,7 +111,7 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                             Workspace
                         </div>
                         <Link
-                            href={route('tasks.index', { scope: 'all' })}
+                            href={route('tasks.index')}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'all' && currentNav !== 'teams'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -134,7 +134,7 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                         </Link>
 
                         <Link
-                            href={route('tasks.index', { scope: 'assigned_to_me' })}
+                            href={route('tasks.assigned')}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'assigned_to_me'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -153,7 +153,7 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                         </Link>
 
                         <Link
-                            href={route('tasks.index', { scope: 'assigned_by_me' })}
+                            href={route('tasks.created')}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'assigned_by_me' && currentNav !== 'teams'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'

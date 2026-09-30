@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client';
 const appName = import.meta.env.VITE_APP_NAME || 'Marsha Workspace';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} | ${appName}` : appName),
+    title: () => 'Marsha Workspace',
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.jsx`,

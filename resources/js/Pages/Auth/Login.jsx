@@ -38,9 +38,9 @@ export default function Login({ status }) {
                     </div>
                     <div className="space-y-0.5">
                         <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
-                            Marsha Security
+                            Marsha Workspace
                         </h1>
-                        <p className="text-xs text-slate-500">Project Workspace</p>
+                        <p className="text-xs text-slate-500">Security Engineering Platform</p>
                     </div>
                 </div>
 

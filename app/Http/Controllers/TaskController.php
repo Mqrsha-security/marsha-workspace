@@ -355,4 +355,16 @@ class TaskController extends Controller
 
         return redirect()->back()->with('success', 'Note added successfully.');
     }
+
+    public function assigned(Request $request): Response
+    {
+        $request->merge(['scope' => 'assigned_to_me']);
+        return $this->index($request);
+    }
+
+    public function created(Request $request): Response
+    {
+        $request->merge(['scope' => 'assigned_by_me']);
+        return $this->index($request);
+    }
 }
