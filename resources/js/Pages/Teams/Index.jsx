@@ -29,7 +29,7 @@ export default function TeamsIndex({ members = [], counts = {} }) {
                             </h1>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Daftar kontributor independen dan penanggung jawab di Marsha Security
+                            Core contributors and security responsibility directory
                         </p>
                     </div>
 
@@ -98,11 +98,11 @@ export default function TeamsIndex({ members = [], counts = {} }) {
 
                                             {hasRole ? (
                                                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pt-1 max-w-2xl">
-                                                    Perancangan arsitektur keamanan sistem, analisis celah kerentanan, dan standardisasi keamanan infrastruktur proyek Marsha Security.
+                                                    Responsible for application security architecture, vulnerability assessment, threat modeling, and infrastructure security protocols.
                                                 </p>
                                             ) : (
                                                 <p className="text-xs text-slate-500 dark:text-slate-400 italic leading-relaxed pt-1 max-w-2xl">
-                                                    Kontributor inti dalam manajemen pengerjaan tugas dan operasional alur kerja tim.
+                                                    Core contributor driving project orchestration, timeline coordination, and cross-functional operations.
                                                 </p>
                                             )}
                                         </div>
@@ -111,22 +111,22 @@ export default function TeamsIndex({ members = [], counts = {} }) {
                                         <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4">
                                             <div className="flex items-center gap-5 text-xs justify-center md:justify-start w-full sm:w-auto">
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className="text-slate-400 font-medium">Total:</span>
+                                                    <span className="text-slate-400 font-medium">Total Tasks:</span>
                                                     <span className="font-bold text-slate-900 dark:text-slate-100">{member.total_tasks_count ?? 0}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className="text-blue-500 font-medium">Berjalan:</span>
+                                                    <span className="text-blue-500 font-medium">In Progress:</span>
                                                     <span className="font-bold text-blue-700 dark:text-blue-300">{member.active_tasks_count ?? 0}</span>
                                                 </div>
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className="text-emerald-500 font-medium">Selesai:</span>
+                                                    <span className="text-emerald-500 font-medium">Completed:</span>
                                                     <span className="font-bold text-emerald-700 dark:text-emerald-300">{member.completed_tasks_count ?? 0}</span>
                                                 </div>
                                             </div>
 
                                             <Link href={route('tasks.index', { search: member.name })} className="w-full sm:w-auto">
                                                 <Button variant="outline" size="sm" className="w-full sm:w-auto text-xs gap-1.5 h-8">
-                                                    Lihat Tugas
+                                                    View Tasks
                                                     <ArrowRight className="h-3.5 w-3.5" />
                                                 </Button>
                                             </Link>

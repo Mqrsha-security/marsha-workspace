@@ -336,11 +336,11 @@ export default function TaskDetailDialog({ open, onOpenChange, task, onEdit, use
 
                         {/* Active Tab Details */}
                         <div className="space-y-3 pt-1">
-                            {/* Activities ("Lagi Ngapain") */}
+                            {/* Activities */}
                             <div className="space-y-1.5">
                                 <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                                     <ListTodo className="h-3.5 w-3.5 text-slate-500" />
-                                    Activities in "{activeTab.name}" ("Lagi Ngapain")
+                                    Activities in "{activeTab.name}"
                                 </span>
 
                                 {activeTab.items && activeTab.items.filter(Boolean).length > 0 ? (

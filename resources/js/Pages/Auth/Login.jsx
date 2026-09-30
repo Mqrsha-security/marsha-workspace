@@ -47,7 +47,7 @@ export default function Login({ status }) {
                 <Card className="shadow-xs border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
                     <CardHeader className="pb-3">
                         <CardTitle className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                            Sign In
+                            Secure Sign In
                         </CardTitle>
                     </CardHeader>
 
@@ -58,11 +58,11 @@ export default function Login({ status }) {
                             </div>
                         )}
 
-                        <form onSubmit={submit} className="space-y-3">
-                            <div className="space-y-1">
+                        <form onSubmit={submit} className="space-y-3.5">
+                            <div className="space-y-1.5">
                                 <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                                     <Mail className="h-3.5 w-3.5 text-slate-400" />
-                                    Email Workspace
+                                    Workspace Email
                                 </label>
                                 <Input
                                     id="email"
@@ -70,7 +70,8 @@ export default function Login({ status }) {
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     autoFocus
-                                    className="h-8 text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+                                    placeholder="e.g. marshaSec@adit.ta"
+                                    className="h-9 text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus-visible:ring-1"
                                     required
                                 />
                                 {errors.email && (
@@ -78,7 +79,7 @@ export default function Login({ status }) {
                                 )}
                             </div>
 
-                            <div className="space-y-1">
+                            <div className="space-y-1.5">
                                 <label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                                     <Lock className="h-3.5 w-3.5 text-slate-400" />
                                     Password
@@ -88,7 +89,8 @@ export default function Login({ status }) {
                                     type="password"
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
-                                    className="h-8 text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+                                    placeholder="Enter account security passphrase"
+                                    className="h-9 text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus-visible:ring-1"
                                     required
                                 />
                                 {errors.password && (
@@ -99,11 +101,15 @@ export default function Login({ status }) {
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                className="w-full h-8 text-xs bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white font-medium"
+                                className="w-full h-9 text-xs bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white font-medium shadow-xs"
                             >
-                                {processing ? 'Signing in...' : 'Sign In'}
-                                <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                                {processing ? 'Authenticating...' : 'Sign In'}
+                                <ArrowRight className="h-3.5 w-3.5 ml-1.5" />
                             </Button>
+
+                            <div className="text-[11px] text-center text-slate-400 dark:text-slate-500 pt-1">
+                                Restricted internal workspace. Authorized personnel only.
+                            </div>
                         </form>
                     </CardContent>
                 </Card>
