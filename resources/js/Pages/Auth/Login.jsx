@@ -70,7 +70,7 @@ export default function Login({ status }) {
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     autoFocus
-                                    placeholder="e.g. marshaSec@adit.ta"
+                                    placeholder="name@company.com"
                                     className="h-9 text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 focus-visible:ring-1"
                                     required
                                 />
