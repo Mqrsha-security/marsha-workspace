@@ -15,9 +15,10 @@ import {
     LogOut,
     Plus,
     LayoutDashboard,
+    Users,
 } from 'lucide-react';
 
-export default function AppLayout({ children, currentScope = 'all', onOpenNewTask, counts = {} }) {
+export default function AppLayout({ children, currentScope = 'all', onOpenNewTask, counts = {}, currentNav = '' }) {
     const { auth } = usePage().props;
     const user = auth.user;
 
@@ -56,10 +57,18 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                 {/* User info */}
                 <div className="p-3.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60">
                     <div className="flex items-center gap-2.5">
-                        <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-700">
-                            <AvatarFallback className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold">
-                                {getInitials(user?.name)}
-                            </AvatarFallback>
+                        <Avatar className="h-8 w-8 border border-slate-200 dark:border-slate-700 overflow-hidden">
+                            {user?.photo_url ? (
+                                <img
+                                    src={user.photo_url}
+                                    alt={user.name}
+                                    className="h-full w-full object-cover object-top"
+                                />
+                            ) : (
+                                <AvatarFallback className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold">
+                                    {getInitials(user?.name)}
+                                </AvatarFallback>
+                            )}
                         </Avatar>
                         <div className="overflow-hidden">
                             <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate" title={user?.name}>
@@ -71,12 +80,14 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                         </div>
                     </div>
                     <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                        <Badge
-                            variant="secondary"
-                            className="text-[9px] font-semibold tracking-wide px-1.5 py-0 bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300"
-                        >
-                            {user?.role || 'Member'}
-                        </Badge>
+                        {user?.role && user.role.trim() !== '' && (
+                            <Badge
+                                variant="secondary"
+                                className="text-[9px] font-semibold tracking-wide px-1.5 py-0 bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300"
+                            >
+                                {user.role}
+                            </Badge>
+                        )}
                         <span className="text-[10px] text-slate-400 dark:text-slate-500">• Active</span>
                     </div>
                 </div>
@@ -102,7 +113,7 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                         <Link
                             href={route('tasks.index', { scope: 'all' })}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'all'
+                                currentScope === 'all' && currentNav !== 'teams'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -144,7 +155,7 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                         <Link
                             href={route('tasks.index', { scope: 'assigned_by_me' })}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'assigned_by_me'
+                                currentScope === 'assigned_by_me' && currentNav !== 'teams'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -152,6 +163,23 @@ export default function AppLayout({ children, currentScope = 'all', onOpenNewTas
                             <span className="flex items-center gap-2">
                                 <Send className="h-3.5 w-3.5" />
                                 Assigned by Me
+                            </span>
+                        </Link>
+
+                        <Link
+                            href={route('teams.index')}
+                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                                currentNav === 'teams'
+                                    ? 'bg-slate-900 dark:bg-slate-800 text-white'
+                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <Users className="h-3.5 w-3.5" />
+                                Teams
+                            </span>
+                            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                2
                             </span>
                         </Link>
                     </div>

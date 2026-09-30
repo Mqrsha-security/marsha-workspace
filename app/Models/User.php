@@ -17,6 +17,19 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $appends = ['photo_url'];
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        if (str_contains($this->email, 'adit')) {
+            return '/images/team/aditya.jpg';
+        }
+        if (str_contains($this->email, 'risti')) {
+            return '/images/team/fahristi.jpg';
+        }
+        return null;
+    }
+
     protected function casts(): array
     {
         return [
