@@ -8,6 +8,26 @@ Route::get('/', function () {
     return auth()->check() ? redirect()->route('tasks.index') : redirect()->route('login');
 });
 
+Route::get('/debug-db', function () {
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        $users = \Illuminate\Support\Facades\DB::table('users')->select('id', 'name', 'email', 'role')->get();
+        return response()->json([
+            'status' => 'connected',
+            'driver' => \Illuminate\Support\Facades\DB::connection()->getDriverName(),
+            'users' => $users,
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'class' => get_class($e),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+        ], 500);
+    }
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect()->route('tasks.index');
