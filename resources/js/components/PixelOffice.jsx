@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { generateOfficeDialogues } from '@/lib/officeChatPool';
 
 export default function PixelOffice({ activeTasks = [] }) {
     // Animation frame ticks
@@ -15,37 +16,9 @@ export default function PixelOffice({ activeTasks = [] }) {
         return () => clearInterval(timer);
     }, []);
 
-    // Dialogue generator based on real project tasks
+    // 100 Dialogue generator based on real project tasks & security workspace topics
     const dialogues = useMemo(() => {
-        if (!activeTasks || activeTasks.length === 0) {
-            return [];
-        }
-
-        const lines = [];
-        activeTasks.forEach((task) => {
-            const shortTitle = task.title.length > 20 ? task.title.slice(0, 18) + '..' : task.title;
-            const statusLabel =
-                task.status === 'in_progress' ? 'in progress' : task.status === 'revisi' ? 'revisi' : 'todo';
-
-            lines.push({
-                speaker: 'risty',
-                text: `Dit, task "${shortTitle}" progresnya gimana?`,
-            });
-            lines.push({
-                speaker: 'adit',
-                text: `Lagi gua garap Ris, statusnya masih ${statusLabel}.`,
-            });
-            lines.push({
-                speaker: 'risty',
-                text: `Prioritas ${task.priority || 'medium'} nih, gas beresin!`,
-            });
-            lines.push({
-                speaker: 'adit',
-                text: `Siap, checklist coding udah mulai jalan.`,
-            });
-        });
-
-        return lines;
+        return generateOfficeDialogues(activeTasks);
     }, [activeTasks]);
 
     // Dialogue rotation timer (only active if there are tasks and not muted)
