@@ -47,6 +47,121 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
   }
+
+  html.pink {
+    --background: 345 60% 98%;
+    --foreground: 345 30% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 345 30% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 345 30% 20%;
+    --primary: 345 75% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 345 65% 94%;
+    --secondary-foreground: 345 70% 35%;
+    --muted: 345 40% 95%;
+    --muted-foreground: 345 20% 50%;
+    --accent: 345 65% 93%;
+    --accent-foreground: 345 70% 30%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 345 45% 88%;
+    --input: 345 45% 88%;
+    --ring: 345 75% 65%;
+  }
+
+  /* Pastel Rose & Cute Soft Pink Palette */
+  html.pink body,
+  html.pink main {
+    background-color: #fff0f3 !important;
+    color: #4a1d2e !important;
+  }
+
+  html.pink aside {
+    background-color: #fff7f9 !important;
+    border-color: #fcd5df !important;
+  }
+
+  html.pink header {
+    background-color: #ffffff !important;
+    border-color: #fcd5df !important;
+  }
+
+  html.pink .bg-white {
+    background-color: #ffffff !important;
+  }
+
+  html.pink .bg-slate-50,
+  html.pink .bg-slate-50\/60,
+  html.pink .bg-slate-50\/70,
+  html.pink .bg-slate-50\/80 {
+    background-color: #fff0f3 !important;
+  }
+
+  html.pink .border-slate-200,
+  html.pink .border-slate-200\/90,
+  html.pink .border-slate-200\/80,
+  html.pink .border-slate-200\/60,
+  html.pink .border-slate-100 {
+    border-color: #fcd5df !important;
+  }
+
+  html.pink .bg-slate-900 {
+    background-color: #e11d68 !important;
+    color: #ffffff !important;
+  }
+
+  html.pink .hover\:bg-slate-800:hover {
+    background-color: #be1252 !important;
+  }
+
+  html.pink .hover\:bg-slate-100:hover {
+    background-color: #fce7ee !important;
+    color: #9d174d !important;
+  }
+
+  html.pink .text-slate-900 {
+    color: #3b0d1e !important;
+  }
+
+  html.pink .text-slate-800 {
+    color: #4c1d2e !important;
+  }
+
+  html.pink .text-slate-600 {
+    color: #70263f !important;
+  }
+
+  html.pink .text-slate-500,
+  html.pink .text-slate-400 {
+    color: #9f4d68 !important;
+  }
+
+  html.pink .bg-slate-700 {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    color: #ffffff !important;
+  }
+
+  html.pink .bg-slate-800 {
+    background-color: #be1252 !important;
+    color: #ffffff !important;
+  }
+
+  html.pink .bg-slate-200 {
+    background-color: #fce7ee !important;
+    color: #9d174d !important;
+  }
+
+  html.pink .bg-slate-100 {
+    background-color: #fcebf0 !important;
+    color: #831843 !important;
+  }
+
+  html.pink input,
+  html.pink textarea,
+  html.pink select {
+    border-color: #fcd5df !important;
+  }
 }
 
 @layer base {
