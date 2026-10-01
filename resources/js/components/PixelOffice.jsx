@@ -76,18 +76,17 @@ export default function PixelOffice({ activeTasks = [] }) {
     return (
         <div className="relative w-full border-b border-slate-200 dark:border-slate-800 bg-[#0c1424] overflow-hidden select-none">
             {/* Header info badge */}
-            <div className="px-3 pt-2 pb-1 flex items-center justify-between text-[10px] font-mono text-slate-400">
+            <div className="px-3 pt-1.5 pb-0.5 flex items-center justify-between text-[10px] font-mono text-slate-400">
                 <div className="flex items-center gap-1.5">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="font-semibold tracking-wider text-slate-300">HQ SIMULATOR</span>
+                    <span className="text-[9px] text-slate-300 font-medium">
+                        {hasTasks ? `${activeTasks.length} tasks in progress` : 'all quiet'}
+                    </span>
                 </div>
                 <div className="flex items-center gap-1">
-                    <span className="text-[9px] text-slate-400">
-                        {hasTasks ? `${activeTasks.length} active` : 'all quiet'}
-                    </span>
                     <button
                         onClick={() => setIsMuted((v) => !v)}
-                        className="px-1 py-0.5 rounded text-[9px] hover:text-slate-200 hover:bg-slate-800 transition-colors"
+                        className="px-1.5 py-0.5 rounded text-[9px] hover:text-slate-200 hover:bg-slate-800 transition-colors"
                         title={isMuted ? 'Unmute Office Chat' : 'Mute Office Chat'}
                     >
                         {isMuted ? 'chat:off' : 'chat:on'}
@@ -99,21 +98,21 @@ export default function PixelOffice({ activeTasks = [] }) {
             {currentDialogue && (
                 <div
                     className={`absolute z-20 transition-all duration-300 pointer-events-none ${
-                        currentDialogue.speaker === 'adit' ? 'left-3 top-8' : 'right-3 top-8'
+                        currentDialogue.speaker === 'adit' ? 'left-2 top-6' : 'right-2 top-6'
                     }`}
-                    style={{ maxWidth: '145px' }}
+                    style={{ maxWidth: '150px' }}
                 >
-                    <div className="relative bg-white text-slate-900 border-2 border-slate-900 p-1.5 rounded-sm shadow-md font-mono text-[9px] leading-tight">
+                    <div className="relative bg-white text-slate-900 border-2 border-slate-900 p-1.5 rounded-sm shadow-lg font-mono text-[9px] leading-tight">
                         <div className="font-bold text-[8px] uppercase tracking-wider text-blue-600 mb-0.5">
                             {currentDialogue.speaker === 'adit' ? 'Aditya' : 'Fahristi'}
                         </div>
-                        <div className="font-medium line-clamp-2">
+                        <div className="font-medium line-clamp-3 text-slate-900">
                             {currentDialogue.text}
                         </div>
                         {/* Pixel speech tail */}
                         <div
                             className={`absolute -bottom-1.5 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-900 ${
-                                currentDialogue.speaker === 'adit' ? 'left-4' : 'right-4'
+                                currentDialogue.speaker === 'adit' ? 'left-6' : 'right-6'
                             }`}
                         />
                     </div>

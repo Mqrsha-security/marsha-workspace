@@ -33,6 +33,7 @@ import {
     Sparkles,
     CheckCircle2,
     ArrowUpRight,
+    X,
 } from 'lucide-react';
 
 function AppBrandIcon({ iconKey, appName, className = 'h-6 w-6' }) {
@@ -105,12 +106,37 @@ function AppBrandIcon({ iconKey, appName, className = 'h-6 w-6' }) {
     );
 }
 
+const DEFAULT_PRESETS = [
+    { name: 'Google Docs', key: 'gdocs', defaultCat: 'Documentation', isDefault: true },
+    { name: 'Google Drive', key: 'gdrive', defaultCat: 'Cloud Storage', isDefault: true },
+    { name: 'Figma', key: 'figma', defaultCat: 'Design System', isDefault: true },
+    { name: 'Academic Journals', key: 'journal', defaultCat: 'Research', isDefault: true },
+    { name: 'Overleaf', key: 'overleaf', defaultCat: 'Research', isDefault: true },
+    { name: 'GitHub', key: 'github', defaultCat: 'Development', isDefault: true },
+];
+
 export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}, categories = [] }) {
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [selectedCategory, setSelectedCategory] = useState(filters.category || 'all');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingApp, setEditingApp] = useState(null);
+
+    const [customPresets, setCustomPresets] = useState(() => {
+        try {
+            const saved = localStorage.getItem('marsha_workspace_custom_presets');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    const [isAddingPreset, setIsAddingPreset] = useState(false);
+    const [newPresetData, setNewPresetData] = useState({
+        name: '',
+        defaultCat: 'Documentation',
+        key: 'link',
+    });
 
     const [formData, setFormData] = useState({
         title: '',
@@ -222,14 +248,49 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
 
     const totalLinksCount = apps.reduce((acc, curr) => acc + (curr.links ? curr.links.length : 0), 0);
 
-    const appPresets = [
-        { name: 'Google Docs', key: 'gdocs', defaultCat: 'Documentation' },
-        { name: 'Google Drive', key: 'gdrive', defaultCat: 'Cloud Storage' },
-        { name: 'Figma', key: 'figma', defaultCat: 'Design System' },
-        { name: 'Academic Journals', key: 'journal', defaultCat: 'Research' },
-        { name: 'Overleaf', key: 'overleaf', defaultCat: 'Research' },
-        { name: 'GitHub', key: 'github', defaultCat: 'Development' },
-    ];
+    const handleSaveNewPreset = (e) => {
+        e?.preventDefault();
+        const trimmed = newPresetData.name.trim();
+        if (!trimmed) return;
+
+        const newPreset = {
+            name: trimmed,
+            key: newPresetData.key || 'link',
+            defaultCat: newPresetData.defaultCat || 'General',
+            isDefault: false,
+        };
+
+        const updated = [...customPresets.filter((p) => p.name.toLowerCase() !== trimmed.toLowerCase()), newPreset];
+        setCustomPresets(updated);
+        try {
+            localStorage.setItem('marsha_workspace_custom_presets', JSON.stringify(updated));
+        } catch (err) {
+            console.error(err);
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            app_name: newPreset.name,
+            icon_key: newPreset.key,
+            category: newPreset.defaultCat,
+        }));
+
+        setNewPresetData({ name: '', defaultCat: 'Documentation', key: 'link' });
+        setIsAddingPreset(false);
+    };
+
+    const handleDeleteCustomPreset = (presetName, e) => {
+        e?.stopPropagation();
+        const updated = customPresets.filter((p) => p.name !== presetName);
+        setCustomPresets(updated);
+        try {
+            localStorage.setItem('marsha_workspace_custom_presets', JSON.stringify(updated));
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const appPresets = [...DEFAULT_PRESETS, ...customPresets];
 
     return (
         <AppLayout currentNav="applications" counts={counts}>
@@ -439,33 +500,114 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
 
                     <form onSubmit={handleSubmit} className="space-y-4 pt-2">
                         {/* Quick Presets */}
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                                Choose Service Preset
-                            </label>
+                        <div className="space-y-2 p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                    Choose Service Preset
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddingPreset((v) => !v)}
+                                    className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                                >
+                                    <Plus className="h-3 w-3" />
+                                    {isAddingPreset ? 'Close' : 'Add Custom Preset'}
+                                </button>
+                            </div>
+
+                            {/* Preset Buttons */}
                             <div className="flex items-center gap-1.5 flex-wrap">
                                 {appPresets.map((preset) => (
-                                    <button
-                                        type="button"
+                                    <div
                                         key={preset.name}
-                                        onClick={() => {
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                app_name: preset.name,
-                                                icon_key: preset.key,
-                                                category: preset.defaultCat,
-                                            }));
-                                        }}
-                                        className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
-                                            formData.app_name === preset.name
-                                                ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent'
-                                                : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                        }`}
+                                        className="relative group flex items-center"
                                     >
-                                        {preset.name}
-                                    </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    app_name: preset.name,
+                                                    icon_key: preset.key,
+                                                    category: preset.defaultCat,
+                                                }));
+                                            }}
+                                            className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
+                                                formData.app_name === preset.name
+                                                    ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent shadow-2xs'
+                                                    : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                            }`}
+                                        >
+                                            {preset.name}
+                                        </button>
+                                        {!preset.isDefault && (
+                                            <button
+                                                type="button"
+                                                onClick={(e) => handleDeleteCustomPreset(preset.name, e)}
+                                                className="ml-1 p-0.5 text-slate-400 hover:text-rose-500 rounded"
+                                                title="Delete custom preset"
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        )}
+                                    </div>
                                 ))}
                             </div>
+
+                            {/* Add Custom Preset Inline Form */}
+                            {isAddingPreset && (
+                                <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                                    <div className="text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+                                        New Service Preset
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                        <Input
+                                            placeholder="Service Name (e.g. Miro)"
+                                            value={newPresetData.name}
+                                            onChange={(e) => setNewPresetData((prev) => ({ ...prev, name: e.target.value }))}
+                                            className="text-xs h-7 bg-white dark:bg-slate-900"
+                                        />
+                                        <Input
+                                            placeholder="Default Category"
+                                            value={newPresetData.defaultCat}
+                                            onChange={(e) => setNewPresetData((prev) => ({ ...prev, defaultCat: e.target.value }))}
+                                            className="text-xs h-7 bg-white dark:bg-slate-900"
+                                        />
+                                        <select
+                                            value={newPresetData.key}
+                                            onChange={(e) => setNewPresetData((prev) => ({ ...prev, key: e.target.value }))}
+                                            className="text-xs h-7 px-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"
+                                        >
+                                            <option value="link">General Icon</option>
+                                            <option value="gdocs">Document Icon</option>
+                                            <option value="gdrive">Cloud Icon</option>
+                                            <option value="figma">Design Icon</option>
+                                            <option value="journal">Journal Icon</option>
+                                            <option value="overleaf">LaTeX Icon</option>
+                                            <option value="github">Code Icon</option>
+                                        </select>
+                                    </div>
+                                    <div className="flex items-center justify-end gap-1.5 pt-1">
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setIsAddingPreset(false)}
+                                            className="text-[11px] h-6 px-2"
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            onClick={handleSaveNewPreset}
+                                            className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-[11px] h-6 px-2.5"
+                                        >
+                                            Save Preset
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Title and Category */}
