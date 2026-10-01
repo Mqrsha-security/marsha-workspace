@@ -130,7 +130,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         >
                             <span className="flex items-center gap-2">
                                 <UserCheck className="h-3.5 w-3.5" />
-                                Assigned to Me
+                                My Tasks
                             </span>
                             {counts.my_tasks !== undefined && (
                                 <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-semibold">
@@ -149,7 +149,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         >
                             <span className="flex items-center gap-2">
                                 <Send className="h-3.5 w-3.5" />
-                                Assigned by Me
+                                Created by Me
                             </span>
                         </Link>
 

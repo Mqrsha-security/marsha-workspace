@@ -122,13 +122,17 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
                     <div>
                         <h1 className="text-base font-bold text-slate-900 dark:text-slate-100">
                             {filters.scope === 'assigned_to_me'
-                                ? 'Assigned to Me'
+                                ? 'My Tasks'
                                 : filters.scope === 'assigned_by_me'
-                                ? 'Assigned by Me'
+                                ? 'Created by Me'
                                 : 'All Project Tasks'}
                         </h1>
                         <p className="text-[11px] text-slate-400">
-                            {tasks.length} tasks in view
+                            {filters.scope === 'assigned_to_me'
+                                ? 'Tasks assigned to you for execution'
+                                : filters.scope === 'assigned_by_me'
+                                ? 'Tasks created and delegated by you'
+                                : `${tasks.length} tasks in view`}
                         </p>
                     </div>
 
