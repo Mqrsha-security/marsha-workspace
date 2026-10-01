@@ -16,7 +16,7 @@ export default function TeamsIndex({ members = [], counts = {} }) {
         <AppLayout currentNav="teams" counts={counts}>
             <Head title="Teams" />
 
-            <div className="flex-1 p-6 md:p-8 max-w-5xl mx-auto w-full space-y-8">
+            <div className="flex-1 p-3.5 sm:p-6 md:p-8 max-w-5xl mx-auto w-full space-y-5 sm:space-y-8">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
                     <div className="space-y-1">
@@ -42,7 +42,7 @@ export default function TeamsIndex({ members = [], counts = {} }) {
                 </div>
 
                 {/* Team Members List with spacious separate horizontal cards */}
-                <div className="space-y-8">
+                <div className="space-y-5 sm:space-y-8">
                     {members.map((member) => {
                         const hasRole = Boolean(member.role && member.role.trim() !== '');
 
@@ -51,7 +51,7 @@ export default function TeamsIndex({ members = [], counts = {} }) {
                                 key={member.id}
                                 className="overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
                             >
-                                <div className="p-6 md:p-7 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
+                                <div className="p-4 sm:p-6 md:p-7 flex flex-col md:flex-row items-center md:items-start gap-5 md:gap-8">
                                     {/* Standardized Formal Photo Box with breathing room */}
                                     <div className="relative w-40 h-52 sm:w-44 sm:h-56 rounded-xl overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950 shadow-xs">
                                         {member.photo_url ? (

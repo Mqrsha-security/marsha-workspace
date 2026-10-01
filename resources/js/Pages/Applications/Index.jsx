@@ -296,7 +296,7 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
         <AppLayout currentNav="applications" counts={counts}>
             <Head title="Applications" />
 
-            <div className="flex-1 p-6 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+            <div className="flex-1 p-3.5 sm:p-6 md:p-8 max-w-6xl mx-auto w-full space-y-4 sm:space-y-6">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
                     <div className="space-y-1">
@@ -397,7 +397,7 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
                                 key={app.id}
                                 className="overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs hover:shadow-xs transition-shadow flex flex-col justify-between"
                             >
-                                <div className="p-5 space-y-4 flex-1">
+                                <div className="p-4 sm:p-5 space-y-4 flex-1">
                                     {/* Top Bar with Icon & Actions */}
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="flex items-start gap-3 min-w-0">

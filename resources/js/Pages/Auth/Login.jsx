@@ -40,7 +40,7 @@ export default function Login({ status }) {
                         <h1 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
                             Marsha Workspace
                         </h1>
-                        <p className="text-xs text-slate-500">Security Engineering Platform</p>
+                        <p className="text-xs text-slate-500">Building a system so we can all sleep at night.</p>
                     </div>
                 </div>
 

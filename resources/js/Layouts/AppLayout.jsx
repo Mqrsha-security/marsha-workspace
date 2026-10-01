@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -16,11 +17,16 @@ import {
     LayoutDashboard,
     Users,
     AppWindow,
+    Menu,
+    X,
 } from 'lucide-react';
 
 export default function AppLayout({ children, currentScope = 'all', counts = {}, currentNav = '' }) {
     const { auth, active_tasks = [] } = usePage().props;
     const user = auth.user;
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
     const getInitials = (name) => {
         if (!name) return 'U';
@@ -33,12 +39,73 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
     };
 
     return (
-        <div className="min-h-screen flex bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors">
-            {/* Sidebar */}
-            <aside className="w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-30 transition-colors">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased transition-colors">
+            {/* Mobile Top Header (Android & small screens) */}
+            <header className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-3.5 py-2.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors shadow-2xs">
+                <div className="flex items-center gap-2 min-w-0">
+                    <button
+                        type="button"
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className="p-1.5 -ml-1 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+                        aria-label="Open navigation menu"
+                    >
+                        <Menu className="h-5 w-5" />
+                    </button>
+                    <div className="flex items-center gap-2 min-w-0">
+                        <div className="h-7 w-7 rounded-lg bg-black border border-slate-700 p-0.5 flex items-center justify-center shrink-0">
+                            <img
+                                src="/images/marsha-security.png"
+                                alt="Marsha Security"
+                                className="h-full w-full object-contain"
+                            />
+                        </div>
+                        <div className="min-w-0">
+                            <div className="text-xs font-bold tracking-tight text-slate-900 dark:text-slate-100 truncate">
+                                Marsha Workspace
+                            </div>
+                            <div className="text-[9px] text-slate-400 truncate max-w-[170px] sm:max-w-xs">
+                                Building a system so we can all sleep at night.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                    <ThemeToggle />
+                    <Avatar className="h-7 w-7 border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        {user?.photo_url ? (
+                            <img
+                                src={user.photo_url}
+                                alt={user.name}
+                                className="h-full w-full object-cover object-top"
+                            />
+                        ) : (
+                            <AvatarFallback className="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-[10px] font-bold">
+                                {getInitials(user?.name)}
+                            </AvatarFallback>
+                        )}
+                    </Avatar>
+                </div>
+            </header>
+
+            {/* Mobile Backdrop Overlay */}
+            {isMobileMenuOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-40 backdrop-blur-xs lg:hidden transition-opacity"
+                    onClick={closeMobileMenu}
+                    aria-hidden="true"
+                />
+            )}
+
+            {/* Sidebar (Desktop fixed / Mobile slide-over drawer) */}
+            <aside
+                className={`w-72 sm:w-80 lg:w-64 flex-shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+                    isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+                }`}
+            >
                 {/* Branding */}
                 <div className="p-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2.5 min-w-0 pr-1">
                         <div className="h-8 w-8 rounded-lg bg-black border border-slate-700 p-0.5 flex items-center justify-center shrink-0 shadow-xs">
                             <img
                                 src="/images/marsha-security.png"
@@ -46,12 +113,22 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                                 className="h-full w-full object-contain"
                             />
                         </div>
-                        <div>
-                            <div className="text-xs font-bold tracking-tight text-slate-900 dark:text-slate-100">Marsha Workspace</div>
-                            <div className="text-[10px] text-slate-400">Security Engineering</div>
+                        <div className="min-w-0">
+                            <div className="text-xs font-bold tracking-tight text-slate-900 dark:text-slate-100 truncate">Marsha Workspace</div>
+                            <div className="text-[10px] text-slate-400 leading-tight">Building a system so we can all sleep at night.</div>
                         </div>
                     </div>
-                    <ThemeToggle />
+                    <div className="flex items-center gap-1 shrink-0">
+                        <ThemeToggle className="hidden lg:flex" />
+                        <button
+                            type="button"
+                            onClick={closeMobileMenu}
+                            className="lg:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                            aria-label="Close navigation menu"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* User info */}
@@ -104,6 +181,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         </div>
                         <Link
                             href={route('tasks.index')}
+                            onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -127,6 +205,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.assigned')}
+                            onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'assigned_to_me'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -146,6 +225,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.created')}
+                            onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'assigned_by_me' && currentNav !== 'teams' && currentNav !== 'applications'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -160,6 +240,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('applications.index')}
+                            onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentNav === 'applications'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -183,6 +264,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('teams.index')}
+                            onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentNav === 'teams'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
@@ -209,6 +291,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'revisi' })}
+                            onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40"
                         >
                             <span className="flex items-center gap-2">
@@ -222,6 +305,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'in_progress' })}
+                            onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40"
                         >
                             <span className="flex items-center gap-2">
@@ -235,6 +319,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'todo' })}
+                            onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
                             <span className="flex items-center gap-2">
@@ -248,6 +333,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'done' })}
+                            onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
                         >
                             <span className="flex items-center gap-2">
@@ -267,6 +353,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         href={route('logout')}
                         method="post"
                         as="button"
+                        onClick={closeMobileMenu}
                         className="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 border border-transparent hover:border-rose-200 dark:hover:border-rose-900 transition-colors"
                     >
                         <LogOut className="h-3.5 w-3.5" />
@@ -276,7 +363,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 ml-64 min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors">
+            <main className="flex-1 ml-0 lg:ml-64 min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors w-full overflow-x-hidden">
                 {children}
             </main>
         </div>

@@ -117,7 +117,7 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
             <Head title="Project Tasks" />
 
             {/* Top Bar */}
-            <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-5 py-3 sticky top-0 z-20 transition-colors">
+            <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-3.5 sm:px-5 py-3 lg:sticky lg:top-0 lg:z-20 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                         <h1 className="text-base font-bold text-slate-900 dark:text-slate-100">
@@ -136,7 +136,7 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                         {/* Notifications */}
                         <NotificationDropdown
                             onSelectTask={(taskId) => {
@@ -189,18 +189,18 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
                 </div>
 
                 {/* Filters */}
-                <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                    <form onSubmit={handleSearchSubmit} className="relative flex-1 min-w-[200px] max-w-sm">
+                <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                    <form onSubmit={handleSearchSubmit} className="relative flex-1 w-full sm:max-w-sm">
                         <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
                         <Input
                             placeholder="Filter by title, chapter, or assignee..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-8 text-xs h-7 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+                            className="w-full pl-8 text-xs h-7 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                         />
                     </form>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
                         {categories.length > 0 && (
                             <Select
                                 value={filters.category || 'all'}
@@ -240,7 +240,7 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
             </header>
 
             {/* Board / List */}
-            <div className="p-4 sm:p-5 flex-1 max-w-7xl w-full mx-auto">
+            <div className="p-3 sm:p-5 flex-1 max-w-7xl w-full mx-auto">
                 <MotivationBanner user={auth?.user} />
 
                 {tasks.length === 0 ? (
