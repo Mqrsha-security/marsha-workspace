@@ -12,6 +12,10 @@ class PresenceController extends Controller
     public function ping(Request $request): JsonResponse
     {
         $user = Auth::user();
+        if (!$user && ($userId = $request->input('user_id') ?? $request->query('user_id'))) {
+            $user = User::find($userId);
+        }
+
         if ($user) {
             $user->updateQuietly(['last_seen_at' => now()]);
         }
@@ -37,6 +41,10 @@ class PresenceController extends Controller
     public function offline(Request $request): JsonResponse
     {
         $user = Auth::user();
+        if (!$user && ($userId = $request->input('user_id') ?? $request->query('user_id'))) {
+            $user = User::find($userId);
+        }
+
         if ($user) {
             $user->updateQuietly(['last_seen_at' => now()->subMinutes(5)]);
         }

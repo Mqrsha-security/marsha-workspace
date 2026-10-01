@@ -33,12 +33,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/applications/{application}', [\App\Http\Controllers\WorkspaceAppController::class, 'destroy'])->name('applications.destroy');
 
     Route::post('/presence/ping', [\App\Http\Controllers\PresenceController::class, 'ping'])->name('presence.ping');
-    Route::post('/presence/offline', [\App\Http\Controllers\PresenceController::class, 'offline'])->name('presence.offline');
     Route::get('/presence/users', [\App\Http\Controllers\PresenceController::class, 'users'])->name('presence.users');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::post('/presence/offline', [\App\Http\Controllers\PresenceController::class, 'offline'])->name('presence.offline');
 
 require __DIR__.'/auth.php';

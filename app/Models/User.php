@@ -35,7 +35,7 @@ class User extends Authenticatable
         if (!$this->last_seen_at) {
             return false;
         }
-        return $this->last_seen_at->greaterThanOrEqualTo(now()->subSeconds(75));
+        return $this->last_seen_at->greaterThanOrEqualTo(now()->subSeconds(25));
     }
 
     public function getLastSeenFormattedAttribute(): string

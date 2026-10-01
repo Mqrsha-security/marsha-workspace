@@ -16,46 +16,39 @@ export default function PixelOffice({ activeTasks = [], isAditActive = true, isR
         return () => clearInterval(timer);
     }, []);
 
-    // Filter dialogues based on active/sleeping state
+    const bothActive = Boolean(isAditActive && isRistyActive);
+
+    // Filter dialogues: ONLY generate and show dialogues when BOTH characters are online and awake
     const dialogues = useMemo(() => {
-        const raw = generateOfficeDialogues(activeTasks);
-        if (!isAditActive && !isRistyActive) {
+        if (!bothActive) {
             return [];
         }
-        if (isAditActive && !isRistyActive) {
-            const aditList = raw.filter((d) => d.speaker === 'adit');
-            return aditList.length > 0
-                ? aditList
-                : [{ speaker: 'adit', text: 'Risty lagi offline. Gue standby pantau system security.' }];
-        }
-        if (!isAditActive && isRistyActive) {
-            const ristyList = raw.filter((d) => d.speaker === 'risty');
-            return ristyList.length > 0
-                ? ristyList
-                : [{ speaker: 'risty', text: 'Adit lagi istirahat. Gue monitor progress task board dulu.' }];
-        }
-        return raw;
-    }, [activeTasks, isAditActive, isRistyActive]);
+        return generateOfficeDialogues(activeTasks);
+    }, [activeTasks, bothActive]);
 
     // Dialogue rotation timer
     useEffect(() => {
-        if (dialogues.length === 0 || isMuted) return;
+        if (!bothActive || dialogues.length === 0 || isMuted) {
+            setDialogueIndex(0);
+            return;
+        }
 
         const dialogueTimer = setInterval(() => {
             setDialogueIndex((prev) => {
                 const nextIdx = (prev + 1) % dialogues.length;
-                setSpeaker(dialogues[nextIdx]?.speaker || (isAditActive ? 'adit' : 'risty'));
+                setSpeaker(dialogues[nextIdx]?.speaker || 'risty');
                 return nextIdx;
             });
         }, 5500);
 
         return () => clearInterval(dialogueTimer);
-    }, [dialogues, isMuted, isAditActive, isRistyActive]);
+    }, [dialogues, isMuted, bothActive]);
 
     const hasTasks = activeTasks && activeTasks.length > 0;
-    const currentDialogue = (!isAditActive && !isRistyActive)
-        ? { speaker: 'none', text: 'Zzz... Kantor hening, Adit & Risty sedang istirahat (tab offline).' }
-        : (hasTasks && !isMuted && dialogues.length > 0 ? dialogues[dialogueIndex % dialogues.length] : null);
+    // Current dialogue strictly requires BOTH to be online, tasks present, and not muted
+    const currentDialogue = (bothActive && hasTasks && !isMuted && dialogues.length > 0)
+        ? dialogues[dialogueIndex % dialogues.length]
+        : null;
 
     // Derived animation frames
     const typingFrame = tick % 2;
@@ -68,23 +61,27 @@ export default function PixelOffice({ activeTasks = [], isAditActive = true, isR
         <div className="relative w-full border-b border-slate-200 dark:border-slate-800 bg-[#0c1424] overflow-hidden select-none">
             {/* Header info badge with Live Presence */}
             <div className="px-3 pt-1.5 pb-0.5 flex items-center justify-between text-[10px] font-mono text-slate-400">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                     <span className="flex items-center gap-1">
                         <span className={`inline-block h-1.5 w-1.5 rounded-full ${isAditActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
-                        <span className="text-[9px] text-slate-300 font-medium">Adit:{isAditActive ? 'online' : 'sleep'}</span>
+                        <span className={`text-[9px] font-medium ${isAditActive ? 'text-slate-200' : 'text-slate-500'}`}>
+                            Adit:{isAditActive ? 'online' : 'sleep'}
+                        </span>
                     </span>
                     <span className="flex items-center gap-1">
                         <span className={`inline-block h-1.5 w-1.5 rounded-full ${isRistyActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
-                        <span className="text-[9px] text-slate-300 font-medium">Risty:{isRistyActive ? 'online' : 'sleep'}</span>
+                        <span className={`text-[9px] font-medium ${isRistyActive ? 'text-slate-200' : 'text-slate-500'}`}>
+                            Risty:{isRistyActive ? 'online' : 'sleep'}
+                        </span>
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
                     <button
                         onClick={() => setIsMuted((v) => !v)}
                         className="px-1.5 py-0.5 rounded text-[9px] hover:text-slate-200 hover:bg-slate-800 transition-colors"
-                        title={isMuted ? 'Unmute Office Chat' : 'Mute Office Chat'}
+                        title={isMuted ? 'Unmute Office Chat' : (!bothActive ? 'Chat paused while partner is offline' : 'Mute Office Chat')}
                     >
-                        {isMuted ? 'chat:off' : 'chat:on'}
+                        {isMuted ? 'chat:off' : (!bothActive ? 'chat:waiting' : 'chat:on')}
                     </button>
                 </div>
             </div>
