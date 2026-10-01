@@ -14,6 +14,7 @@ import {
     LogOut,
     LayoutDashboard,
     Users,
+    AppWindow,
 } from 'lucide-react';
 
 export default function AppLayout({ children, currentScope = 'all', counts = {}, currentNav = '' }) {
@@ -100,7 +101,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         <Link
                             href={route('tasks.index')}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'all' && currentNav !== 'teams'
+                                currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -142,7 +143,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         <Link
                             href={route('tasks.created')}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'assigned_by_me' && currentNav !== 'teams'
+                                currentScope === 'assigned_by_me' && currentNav !== 'teams' && currentNav !== 'applications'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -151,6 +152,29 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                                 <Send className="h-3.5 w-3.5" />
                                 Created by Me
                             </span>
+                        </Link>
+
+                        <Link
+                            href={route('applications.index')}
+                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                                currentNav === 'applications'
+                                    ? 'bg-slate-900 dark:bg-slate-800 text-white'
+                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <AppWindow className="h-3.5 w-3.5" />
+                                Applications
+                            </span>
+                            {counts.apps_count !== undefined && (
+                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                                    currentNav === 'applications'
+                                        ? 'bg-slate-700 dark:bg-slate-700 text-slate-200'
+                                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                }`}>
+                                    {counts.apps_count}
+                                </span>
+                            )}
                         </Link>
 
                         <Link

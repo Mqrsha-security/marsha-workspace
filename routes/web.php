@@ -27,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
 
     Route::get('/teams', [\App\Http\Controllers\TeamController::class, 'index'])->name('teams.index');
+    Route::get('/applications', [\App\Http\Controllers\WorkspaceAppController::class, 'index'])->name('applications.index');
+    Route::post('/applications', [\App\Http\Controllers\WorkspaceAppController::class, 'store'])->name('applications.store');
+    Route::put('/applications/{application}', [\App\Http\Controllers\WorkspaceAppController::class, 'update'])->name('applications.update');
+    Route::delete('/applications/{application}', [\App\Http\Controllers\WorkspaceAppController::class, 'destroy'])->name('applications.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
