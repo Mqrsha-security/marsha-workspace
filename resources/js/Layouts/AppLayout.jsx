@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import { usePresence } from '@/hooks/usePresence';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
@@ -25,6 +26,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
     const { auth, active_tasks = [] } = usePage().props;
     const user = auth.user;
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { presenceList, isAditActive, isRistyActive } = usePresence();
 
     const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
@@ -165,12 +167,19 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                                 {user.role}
                             </Badge>
                         )}
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500">• Active</span>
+                        <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Online
+                        </span>
                     </div>
                 </div>
 
                 {/* Pixel Office Companion Room */}
-                <PixelOffice activeTasks={active_tasks} />
+                <PixelOffice
+                    activeTasks={active_tasks}
+                    isAditActive={isAditActive}
+                    isRistyActive={isRistyActive}
+                />
 
                 {/* Navigation Links */}
                 <nav className="flex-1 px-3 py-3 space-y-4 overflow-y-auto">

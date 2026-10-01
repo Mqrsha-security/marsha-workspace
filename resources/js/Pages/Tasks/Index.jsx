@@ -331,13 +331,27 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
                                                 {/* Date & Link */}
                                                 <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                                                     <span className="flex items-center gap-1">
-                                                        <Clock className="h-3 w-3" />
-                                                        {formatDateTime(task.due_at)}
+                                                        <Clock className="h-3 w-3 text-slate-400" />
+                                                        Due: {formatDateTime(task.due_at)}
                                                     </span>
                                                     {task.link && (
                                                         <span className="flex items-center gap-0.5 text-blue-600 dark:text-blue-400 font-medium">
                                                             <Link2 className="h-3 w-3" /> Link
                                                         </span>
+                                                    )}
+                                                </div>
+
+                                                {/* Timestamp Trackers: Created, Edited, Done */}
+                                                <div className="pt-1 text-[9px] text-slate-400 flex flex-col gap-0.5 border-t border-slate-100/90 dark:border-slate-800/90">
+                                                    <div className="flex items-center justify-between">
+                                                        <span>C: {formatDateTime(task.created_at)}</span>
+                                                        <span>E: {formatDateTime(task.updated_at)}</span>
+                                                    </div>
+                                                    {(task.completed_at || task.status === 'done') && (
+                                                        <div className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
+                                                            <CheckCircle2 className="h-2.5 w-2.5" />
+                                                            Done: {formatDateTime(task.completed_at || task.updated_at)}
+                                                        </div>
                                                     )}
                                                 </div>
 
@@ -416,7 +430,7 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
                                     )}
                                 </div>
 
-                                <div className="flex items-center gap-3 text-xs">
+                                <div className="flex flex-wrap items-center gap-3 text-xs">
                                     <div className="flex items-center gap-1.5">
                                         <Avatar className="h-5 w-5">
                                             <AvatarFallback className="text-[8px] bg-slate-800 text-white">
@@ -427,8 +441,14 @@ export default function Index({ tasks = [], counts = {}, users = [], categories 
                                             {task.assignee?.name}
                                         </span>
                                     </div>
-                                    <div className="text-right text-[11px] text-slate-500 dark:text-slate-400 pl-2 border-l border-slate-200 dark:border-slate-800">
-                                        {formatDateTime(task.due_at)}
+                                    <div className="flex flex-col text-right text-[10px] text-slate-500 dark:text-slate-400 pl-2 border-l border-slate-200 dark:border-slate-800">
+                                        <span className="font-medium text-slate-700 dark:text-slate-300">Due: {formatDateTime(task.due_at)}</span>
+                                        <span className="text-[9px] text-slate-400">Created: {formatDateTime(task.created_at)}</span>
+                                        {task.status === 'done' && (
+                                            <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                                                Done: {formatDateTime(task.completed_at || task.updated_at)}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </div>

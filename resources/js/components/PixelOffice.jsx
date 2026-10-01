@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import { generateOfficeDialogues } from '@/lib/officeChatPool';
 
-export default function PixelOffice({ activeTasks = [] }) {
+export default function PixelOffice({ activeTasks = [], isAditActive = true, isRistyActive = true }) {
     // Animation frame ticks
     const [tick, setTick] = useState(0);
     const [dialogueIndex, setDialogueIndex] = useState(0);
     const [speaker, setSpeaker] = useState('risty'); // 'adit' | 'risty'
     const [isMuted, setIsMuted] = useState(false);
 
-    // Fast animation tick (for typing, steam, blinking LEDs)
+    // Fast animation tick (for typing, steam, blinking LEDs, floating Zzz)
     useEffect(() => {
         const timer = setInterval(() => {
             setTick((prev) => (prev + 1) % 120);
@@ -16,44 +16,66 @@ export default function PixelOffice({ activeTasks = [] }) {
         return () => clearInterval(timer);
     }, []);
 
-    // 100 Dialogue generator based on real project tasks & security workspace topics
+    // Filter dialogues based on active/sleeping state
     const dialogues = useMemo(() => {
-        return generateOfficeDialogues(activeTasks);
-    }, [activeTasks]);
+        const raw = generateOfficeDialogues(activeTasks);
+        if (!isAditActive && !isRistyActive) {
+            return [];
+        }
+        if (isAditActive && !isRistyActive) {
+            const aditList = raw.filter((d) => d.speaker === 'adit');
+            return aditList.length > 0
+                ? aditList
+                : [{ speaker: 'adit', text: 'Risty lagi offline. Gue standby pantau system security.' }];
+        }
+        if (!isAditActive && isRistyActive) {
+            const ristyList = raw.filter((d) => d.speaker === 'risty');
+            return ristyList.length > 0
+                ? ristyList
+                : [{ speaker: 'risty', text: 'Adit lagi istirahat. Gue monitor progress task board dulu.' }];
+        }
+        return raw;
+    }, [activeTasks, isAditActive, isRistyActive]);
 
-    // Dialogue rotation timer (only active if there are tasks and not muted)
+    // Dialogue rotation timer
     useEffect(() => {
         if (dialogues.length === 0 || isMuted) return;
 
         const dialogueTimer = setInterval(() => {
             setDialogueIndex((prev) => {
                 const nextIdx = (prev + 1) % dialogues.length;
-                setSpeaker(dialogues[nextIdx]?.speaker || 'risty');
+                setSpeaker(dialogues[nextIdx]?.speaker || (isAditActive ? 'adit' : 'risty'));
                 return nextIdx;
             });
         }, 5500);
 
         return () => clearInterval(dialogueTimer);
-    }, [dialogues, isMuted]);
+    }, [dialogues, isMuted, isAditActive, isRistyActive]);
 
     const hasTasks = activeTasks && activeTasks.length > 0;
-    const currentDialogue = hasTasks && !isMuted ? dialogues[dialogueIndex] : null;
+    const currentDialogue = (!isAditActive && !isRistyActive)
+        ? { speaker: 'none', text: 'Zzz... Kantor hening, Adit & Risty sedang istirahat (tab offline).' }
+        : (hasTasks && !isMuted && dialogues.length > 0 ? dialogues[dialogueIndex % dialogues.length] : null);
 
     // Derived animation frames
     const typingFrame = tick % 2;
     const ledFrame = tick % 4;
     const steamFrame = Math.floor(tick / 2) % 3;
     const screenCodeOffset = (tick * 2) % 8;
-    const clockHandAngle = (tick * 6) % 360;
+    const zOffset = tick % 6;
 
     return (
         <div className="relative w-full border-b border-slate-200 dark:border-slate-800 bg-[#0c1424] overflow-hidden select-none">
-            {/* Header info badge */}
+            {/* Header info badge with Live Presence */}
             <div className="px-3 pt-1.5 pb-0.5 flex items-center justify-between text-[10px] font-mono text-slate-400">
-                <div className="flex items-center gap-1.5">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[9px] text-slate-300 font-medium">
-                        {hasTasks ? `${activeTasks.length} tasks in progress` : 'all quiet'}
+                <div className="flex items-center gap-2">
+                    <span className="flex items-center gap-1">
+                        <span className={`inline-block h-1.5 w-1.5 rounded-full ${isAditActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
+                        <span className="text-[9px] text-slate-300 font-medium">Adit:{isAditActive ? 'online' : 'sleep'}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <span className={`inline-block h-1.5 w-1.5 rounded-full ${isRistyActive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
+                        <span className="text-[9px] text-slate-300 font-medium">Risty:{isRistyActive ? 'online' : 'sleep'}</span>
                     </span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -67,27 +89,36 @@ export default function PixelOffice({ activeTasks = [] }) {
                 </div>
             </div>
 
-            {/* Speech Bubble (Only appears when there are tasks and active dialogue) */}
+            {/* Speech Bubble */}
             {currentDialogue && (
                 <div
                     className={`absolute z-20 transition-all duration-300 pointer-events-none ${
-                        currentDialogue.speaker === 'adit' ? 'left-2 top-6' : 'right-2 top-6'
+                        currentDialogue.speaker === 'adit'
+                            ? 'left-2 top-6'
+                            : currentDialogue.speaker === 'risty'
+                            ? 'right-2 top-6'
+                            : 'left-1/2 -translate-x-1/2 top-5'
                     }`}
-                    style={{ maxWidth: '150px' }}
+                    style={{ maxWidth: '160px' }}
                 >
                     <div className="relative bg-white text-slate-900 border-2 border-slate-900 p-1.5 rounded-sm shadow-lg font-mono text-[9px] leading-tight">
                         <div className="font-bold text-[8px] uppercase tracking-wider text-blue-600 mb-0.5">
-                            {currentDialogue.speaker === 'adit' ? 'Aditya' : 'Fahristi'}
+                            {currentDialogue.speaker === 'adit'
+                                ? 'Aditya'
+                                : currentDialogue.speaker === 'risty'
+                                ? 'Fahristi'
+                                : 'Office Sleeping'}
                         </div>
                         <div className="font-medium line-clamp-3 text-slate-900">
                             {currentDialogue.text}
                         </div>
-                        {/* Pixel speech tail */}
-                        <div
-                            className={`absolute -bottom-1.5 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-900 ${
-                                currentDialogue.speaker === 'adit' ? 'left-6' : 'right-6'
-                            }`}
-                        />
+                        {currentDialogue.speaker !== 'none' && (
+                            <div
+                                className={`absolute -bottom-1.5 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-slate-900 ${
+                                    currentDialogue.speaker === 'adit' ? 'left-6' : 'right-6'
+                                }`}
+                            />
+                        )}
                     </div>
                 </div>
             )}
@@ -173,28 +204,66 @@ export default function PixelOffice({ activeTasks = [] }) {
                 <rect x="42" y="66" width="12" height="16" fill="#1e293b" />
                 <rect x="44" y="82" width="8" height="6" fill="#0f172a" />
 
-                {/* Character: Aditya (Formal black suit, white shirt, focused typing) */}
-                {/* Head */}
-                <rect x="43" y="53" width="10" height="10" fill="#fbcfe8" />
-                {/* Hair */}
-                <rect x="42" y="50" width="12" height="4" fill="#09090b" />
-                <rect x="41" y="52" width="2" height="4" fill="#09090b" />
-                {/* Glasses / Eyes */}
-                <rect x="49" y="56" width="3" height="2" fill="#09090b" />
-                <rect x="50" y="56" width="1" height="1" fill="#38bdf8" />
-                {/* Suit body */}
-                <rect x="40" y="63" width="16" height="14" fill="#09090b" />
-                {/* White shirt & tie */}
-                <rect x="47" y="63" width="2" height="7" fill="#ffffff" />
-                <rect x="47" y="65" width="2" height="5" fill="#2563eb" />
-                {/* Animated typing hands */}
-                <rect
-                    x="54"
-                    y={69 + (typingFrame === 0 ? 0 : 2)}
-                    width="4"
-                    height="3"
-                    fill="#fbcfe8"
-                />
+                {/* Aditya Character State: Awake Working vs Sleeping */}
+                {isAditActive ? (
+                    <g>
+                        {/* Head */}
+                        <rect x="43" y="53" width="10" height="10" fill="#fbcfe8" />
+                        {/* Hair */}
+                        <rect x="42" y="50" width="12" height="4" fill="#09090b" />
+                        <rect x="41" y="52" width="2" height="4" fill="#09090b" />
+                        {/* Glasses / Eyes */}
+                        <rect x="49" y="56" width="3" height="2" fill="#09090b" />
+                        <rect x="50" y="56" width="1" height="1" fill="#38bdf8" />
+                        {/* Suit body */}
+                        <rect x="40" y="63" width="16" height="14" fill="#09090b" />
+                        {/* White shirt & tie */}
+                        <rect x="47" y="63" width="2" height="7" fill="#ffffff" />
+                        <rect x="47" y="65" width="2" height="5" fill="#2563eb" />
+                        {/* Animated typing hands */}
+                        <rect
+                            x="54"
+                            y={69 + (typingFrame === 0 ? 0 : 2)}
+                            width="4"
+                            height="3"
+                            fill="#fbcfe8"
+                        />
+                        {/* Monitor Screen with Matrix Code */}
+                        <rect x="60" y="60" width="14" height="11" fill="#022c22" />
+                        <rect x="61" y={61 + (screenCodeOffset % 4)} width="8" height="1" fill="#22c55e" />
+                        <rect x="61" y={64 + (screenCodeOffset % 4)} width="11" height="1" fill="#4ade80" />
+                        <rect x="61" y={67 + (screenCodeOffset % 4)} width="6" height="1" fill="#86efac" />
+                    </g>
+                ) : (
+                    <g>
+                        {/* SLEEPING ADIT */}
+                        {/* Slumped head */}
+                        <rect x="44" y="63" width="12" height="9" fill="#fbcfe8" rx="1" />
+                        {/* Hair */}
+                        <rect x="42" y="61" width="13" height="4" fill="#09090b" rx="1" />
+                        {/* Closed Eyes */}
+                        <rect x="49" y="67" width="3" height="1" fill="#09090b" />
+                        {/* Slumped Suit */}
+                        <rect x="40" y="69" width="16" height="10" fill="#09090b" />
+                        {/* Folded resting hands */}
+                        <rect x="50" y="74" width="7" height="3" fill="#fbcfe8" />
+                        {/* Standby Dark Monitor */}
+                        <rect x="60" y="60" width="14" height="11" fill="#06121e" />
+                        <rect x="65" y="64" width="4" height="2" fill="#334155" />
+                        {/* Animated Floating Zzz */}
+                        <g opacity={0.95}>
+                            <text x={49 - (zOffset % 3)} y={49 - zOffset} fill="#93c5fd" fontSize="4.5" fontFamily="monospace" fontWeight="bold">
+                                Z
+                            </text>
+                            <text x={54 - ((zOffset + 1) % 3)} y={44 - zOffset} fill="#60a5fa" fontSize="3.5" fontFamily="monospace" fontWeight="bold">
+                                z
+                            </text>
+                            <text x={58 - ((zOffset + 2) % 3)} y={39 - zOffset} fill="#3b82f6" fontSize="2.8" fontFamily="monospace" fontWeight="bold">
+                                z
+                            </text>
+                        </g>
+                    </g>
+                )}
 
                 {/* Aditya's Desk */}
                 <rect x="30" y="77" width="48" height="4" fill="#94a3b8" />
@@ -202,40 +271,38 @@ export default function PixelOffice({ activeTasks = [] }) {
                 <rect x="33" y="97" width="4" height="8" fill="#475569" />
                 <rect x="71" y="97" width="4" height="8" fill="#475569" />
 
-                {/* Aditya's Terminal Monitor */}
+                {/* Aditya's Terminal Monitor Frame */}
                 <rect x="58" y="58" width="18" height="15" fill="#0f172a" rx="1" />
                 <rect x="65" y="73" width="4" height="4" fill="#334155" />
                 <rect x="63" y="76" width="8" height="1" fill="#334155" />
-                {/* Monitor Screen with Matrix Code */}
-                <rect x="60" y="60" width="14" height="11" fill="#022c22" />
-                <rect x="61" y={61 + (screenCodeOffset % 4)} width="8" height="1" fill="#22c55e" />
-                <rect x="61" y={64 + (screenCodeOffset % 4)} width="11" height="1" fill="#4ade80" />
-                <rect x="61" y={67 + (screenCodeOffset % 4)} width="6" height="1" fill="#86efac" />
 
                 {/* Keyboard & Mousepad */}
                 <rect x="52" y="76" width="9" height="2" fill="#1e293b" />
                 <rect x="63" y="76" width="3" height="2" fill="#0284c7" />
 
-                {/* Coffee Mug with Animated Steam */}
+                {/* Coffee Mug */}
                 <rect x="34" y="73" width="4" height="4" fill="#ffffff" />
                 <rect x="38" y="74" width="1" height="2" fill="#ffffff" />
-                {/* Steam particles */}
-                <rect
-                    x="35"
-                    y={70 - steamFrame}
-                    width="1"
-                    height="2"
-                    fill="#94a3b8"
-                    opacity="0.8"
-                />
-                <rect
-                    x="37"
-                    y={68 - steamFrame}
-                    width="1"
-                    height="2"
-                    fill="#cbd5e1"
-                    opacity="0.6"
-                />
+                {isAditActive && (
+                    <>
+                        <rect
+                            x="35"
+                            y={70 - steamFrame}
+                            width="1"
+                            height="2"
+                            fill="#94a3b8"
+                            opacity="0.8"
+                        />
+                        <rect
+                            x="37"
+                            y={68 - steamFrame}
+                            width="1"
+                            height="2"
+                            fill="#cbd5e1"
+                            opacity="0.6"
+                        />
+                    </>
+                )}
 
                 {/* Nameplate: ADIT */}
                 <rect x="35" y="80" width="14" height="3" fill="#0f172a" />
@@ -248,28 +315,67 @@ export default function PixelOffice({ activeTasks = [] }) {
                 <rect x="186" y="66" width="12" height="16" fill="#1e293b" />
                 <rect x="188" y="82" width="8" height="6" fill="#0f172a" />
 
-                {/* Character: Fahristi (Purple/indigo hijab, formal blazer, focused management) */}
-                {/* Head / Face */}
-                <rect x="187" y="54" width="10" height="9" fill="#fed7aa" />
-                {/* Hijab wrap */}
-                <rect x="185" y="49" width="14" height="6" fill="#6366f1" />
-                <rect x="184" y="53" width="3" height="11" fill="#6366f1" />
-                <rect x="195" y="53" width="3" height="11" fill="#6366f1" />
-                <rect x="185" y="62" width="14" height="4" fill="#4f46e5" />
-                {/* Eyes */}
-                <rect x="188" y="57" width="2" height="2" fill="#0f172a" />
-                <rect x="189" y="57" width="1" height="1" fill="#ffffff" />
-                {/* Formal office blazer */}
-                <rect x="184" y="65" width="16" height="12" fill="#334155" />
-                <rect x="190" y="65" width="4" height="7" fill="#f8fafc" />
-                {/* Animated hands typing */}
-                <rect
-                    x="180"
-                    y={69 + (typingFrame === 1 ? 0 : 2)}
-                    width="4"
-                    height="3"
-                    fill="#fed7aa"
-                />
+                {/* Fahristi Character State: Awake Working vs Sleeping */}
+                {isRistyActive ? (
+                    <g>
+                        {/* Head / Face */}
+                        <rect x="187" y="54" width="10" height="9" fill="#fed7aa" />
+                        {/* Hijab wrap */}
+                        <rect x="185" y="49" width="14" height="6" fill="#6366f1" />
+                        <rect x="184" y="53" width="3" height="11" fill="#6366f1" />
+                        <rect x="195" y="53" width="3" height="11" fill="#6366f1" />
+                        <rect x="185" y="62" width="14" height="4" fill="#4f46e5" />
+                        {/* Eyes */}
+                        <rect x="188" y="57" width="2" height="2" fill="#0f172a" />
+                        <rect x="189" y="57" width="1" height="1" fill="#ffffff" />
+                        {/* Formal office blazer */}
+                        <rect x="184" y="65" width="16" height="12" fill="#334155" />
+                        <rect x="190" y="65" width="4" height="7" fill="#f8fafc" />
+                        {/* Animated hands typing */}
+                        <rect
+                            x="180"
+                            y={69 + (typingFrame === 1 ? 0 : 2)}
+                            width="4"
+                            height="3"
+                            fill="#fed7aa"
+                        />
+                        {/* Monitor Screen with Kanban / Project Boards */}
+                        <rect x="166" y="60" width="14" height="11" fill="#1e1b4b" />
+                        <rect x="168" y="62" width="3" height="3" fill="#818cf8" />
+                        <rect x="172" y="62" width="3" height="5" fill="#38bdf8" />
+                        <rect x="176" y="62" width="3" height="4" fill="#34d399" />
+                        <rect x="168" y="66" width="3" height="3" fill="#fbbf24" />
+                    </g>
+                ) : (
+                    <g>
+                        {/* SLEEPING RISTY */}
+                        {/* Leaning Hijab */}
+                        <rect x="183" y="60" width="15" height="10" fill="#6366f1" rx="1" />
+                        {/* Leaning face */}
+                        <rect x="185" y="64" width="9" height="7" fill="#fed7aa" />
+                        {/* Closed Eyes */}
+                        <rect x="186" y="67" width="3" height="1" fill="#0f172a" />
+                        {/* Slumped Blazer */}
+                        <rect x="182" y="69" width="16" height="9" fill="#334155" />
+                        {/* Folded resting hands */}
+                        <rect x="177" y="74" width="7" height="3" fill="#fed7aa" />
+                        {/* Standby Dark Monitor */}
+                        <rect x="166" y="60" width="14" height="11" fill="#110e24" />
+                        <rect x="171" y="64" width="4" height="2" fill="#334155" />
+                        {/* Animated Floating Zzz */}
+                        <g opacity={0.95}>
+                            <text x={194 + (zOffset % 3)} y={49 - zOffset} fill="#c084fc" fontSize="4.5" fontFamily="monospace" fontWeight="bold">
+                                Z
+                            </text>
+                            <text x={198 + ((zOffset + 1) % 3)} y={44 - zOffset} fill="#a855f7" fontSize="3.5" fontFamily="monospace" fontWeight="bold">
+                                z
+                            </text>
+                            <text x={202 + ((zOffset + 2) % 3)} y={39 - zOffset} fill="#9333ea" fontSize="2.8" fontFamily="monospace" fontWeight="bold">
+                                z
+                            </text>
+                        </g>
+                    </g>
+                )}
 
                 {/* Fahristi's Desk */}
                 <rect x="162" y="77" width="48" height="4" fill="#94a3b8" />
@@ -277,16 +383,10 @@ export default function PixelOffice({ activeTasks = [] }) {
                 <rect x="165" y="97" width="4" height="8" fill="#475569" />
                 <rect x="203" y="97" width="4" height="8" fill="#475569" />
 
-                {/* Fahristi's Task Monitor */}
+                {/* Fahristi's Task Monitor Frame */}
                 <rect x="164" y="58" width="18" height="15" fill="#0f172a" rx="1" />
                 <rect x="171" y="73" width="4" height="4" fill="#334155" />
                 <rect x="169" y="76" width="8" height="1" fill="#334155" />
-                {/* Monitor Screen with Kanban / Project Boards */}
-                <rect x="166" y="60" width="14" height="11" fill="#1e1b4b" />
-                <rect x="168" y="62" width="3" height="3" fill="#818cf8" />
-                <rect x="172" y="62" width="3" height="5" fill="#38bdf8" />
-                <rect x="176" y="62" width="3" height="4" fill="#34d399" />
-                <rect x="168" y="66" width="3" height="3" fill="#fbbf24" />
 
                 {/* Keyboard & Notebook */}
                 <rect x="179" y="76" width="9" height="2" fill="#1e293b" />
@@ -296,15 +396,18 @@ export default function PixelOffice({ activeTasks = [] }) {
                 {/* Coffee Mug for Risty */}
                 <rect x="202" y="73" width="4" height="4" fill="#ec4899" />
                 <rect x="206" y="74" width="1" height="2" fill="#ec4899" />
-                {/* Steam particles */}
-                <rect
-                    x="203"
-                    y={70 - steamFrame}
-                    width="1"
-                    height="2"
-                    fill="#94a3b8"
-                    opacity="0.8"
-                />
+                {isRistyActive && (
+                    <>
+                        <rect
+                            x="203"
+                            y={70 - steamFrame}
+                            width="1"
+                            height="2"
+                            fill="#94a3b8"
+                            opacity="0.8"
+                        />
+                    </>
+                )}
 
                 {/* Nameplate: RISTY */}
                 <rect x="190" y="80" width="16" height="3" fill="#0f172a" />

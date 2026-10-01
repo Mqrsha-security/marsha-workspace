@@ -272,9 +272,69 @@ export default function TaskDetailDialog({ open, onOpenChange, task, onEdit, use
                             {task.completed_at && (
                                 <div className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
                                     <CheckCircle2 className="h-3 w-3" />
-                                    {formatDateTime(task.completed_at)}
+                                    <span>Done: {formatDateTime(task.completed_at)}</span>
                                 </div>
                             )}
+                        </div>
+
+                        {/* Lifecycle Timestamps Tracker (Create, Edit, Done) */}
+                        <div className="pt-2.5 border-t border-slate-200/70 dark:border-slate-800 space-y-2">
+                            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                Activity & Milestone Timeline
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                {/* Created */}
+                                <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+                                    <div className="flex items-center gap-1 text-[10px] font-semibold text-blue-600 dark:text-blue-400">
+                                        <Clock className="h-3 w-3" />
+                                        <span>Created Date & Time</span>
+                                    </div>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200 text-[11px] leading-tight">
+                                        {formatDateTime(task.created_at)}
+                                    </div>
+                                    <div className="text-[10px] text-slate-400 truncate">
+                                        by {task.creator?.name || 'Workspace member'}
+                                    </div>
+                                </div>
+
+                                {/* Last Edited */}
+                                <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1">
+                                    <div className="flex items-center gap-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400">
+                                        <Edit className="h-3 w-3" />
+                                        <span>Last Edited Date & Time</span>
+                                    </div>
+                                    <div className="font-bold text-slate-800 dark:text-slate-200 text-[11px] leading-tight">
+                                        {task.updated_at ? formatDateTime(task.updated_at) : formatDateTime(task.created_at)}
+                                    </div>
+                                    <div className="text-[10px] text-slate-400">
+                                        Revision & updates tracked
+                                    </div>
+                                </div>
+
+                                {/* Done */}
+                                <div className={`p-2.5 rounded-lg border space-y-1 ${
+                                    task.completed_at || task.status === 'done'
+                                        ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/80'
+                                        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800'
+                                }`}>
+                                    <div className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                        <CheckCircle2 className="h-3 w-3" />
+                                        <span>Done Date & Time</span>
+                                    </div>
+                                    <div className={`font-bold text-[11px] leading-tight ${
+                                        task.completed_at || task.status === 'done'
+                                            ? 'text-emerald-700 dark:text-emerald-300'
+                                            : 'text-slate-400 italic'
+                                    }`}>
+                                        {task.completed_at
+                                            ? formatDateTime(task.completed_at)
+                                            : (task.status === 'done' ? formatDateTime(task.updated_at) : 'Not completed yet')}
+                                    </div>
+                                    <div className="text-[10px] text-slate-400">
+                                        {task.status === 'done' ? 'Completed & verified' : 'In execution workflow'}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
