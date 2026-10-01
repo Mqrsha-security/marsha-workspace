@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import GithubIcon from '@/components/GithubIcon';
 import {
     Dialog,
     DialogContent,
@@ -313,10 +314,22 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
                         </p>
                     </div>
 
-                    <Button onClick={openCreateModal} size="sm" className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white text-xs gap-1.5 h-8">
-                        <Plus className="h-3.5 w-3.5" />
-                        Connect Application
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <a
+                            href="https://github.com/Mqrsha-security"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button variant="outline" size="sm" className="text-xs gap-1.5 h-8">
+                                <GithubIcon className="h-3.5 w-3.5" />
+                                GitHub Org
+                            </Button>
+                        </a>
+                        <Button onClick={openCreateModal} size="sm" className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white text-xs gap-1.5 h-8">
+                            <Plus className="h-3.5 w-3.5" />
+                            Connect Application
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Metrics Bar */}

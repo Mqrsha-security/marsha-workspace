@@ -3,7 +3,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ThemeToggle from '@/components/ThemeToggle';
-import { ArrowRight, Lock, Mail } from 'lucide-react';
+import GithubIcon from '@/components/GithubIcon';
+import { ArrowRight, Lock, Mail, ExternalLink } from 'lucide-react';
 
 export default function Login({ status }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -113,6 +114,20 @@ export default function Login({ status }) {
                         </form>
                     </CardContent>
                 </Card>
+
+                <div className="text-center pt-1">
+                    <a
+                        href="https://github.com/Mqrsha-security"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors group"
+                        title="Mqrsha Security GitHub Organization"
+                    >
+                        <GithubIcon className="h-3.5 w-3.5 text-slate-700 dark:text-slate-300" />
+                        <span>Mqrsha Security Organization</span>
+                        <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200" />
+                    </a>
+                </div>
             </div>
         </div>
     );

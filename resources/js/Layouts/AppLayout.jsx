@@ -20,7 +20,9 @@ import {
     AppWindow,
     Menu,
     X,
+    ExternalLink,
 } from 'lucide-react';
+import GithubIcon from '@/components/GithubIcon';
 
 export default function AppLayout({ children, currentScope = 'all', counts = {}, currentNav = '' }) {
     const { auth, active_tasks = [] } = usePage().props;
@@ -72,7 +74,17 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                    <a
+                        href="https://github.com/Mqrsha-security"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        title="GitHub Organization: Mqrsha-security"
+                        aria-label="GitHub Organization"
+                    >
+                        <GithubIcon className="h-4 w-4" />
+                    </a>
                     <ThemeToggle />
                     <Avatar className="h-7 w-7 border border-slate-200 dark:border-slate-700 overflow-hidden">
                         {user?.photo_url ? (
@@ -357,7 +369,21 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                 </nav>
 
                 {/* Footer */}
-                <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+                <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 space-y-2">
+                    <a
+                        href="https://github.com/Mqrsha-security"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full flex items-center justify-between px-3 py-1.5 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-800 transition-colors group"
+                        title="Visit Mqrsha Security Organization on GitHub"
+                    >
+                        <span className="flex items-center gap-2">
+                            <GithubIcon className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100" />
+                            <span>Mqrsha Security Org</span>
+                        </span>
+                        <ExternalLink className="h-3 w-3 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200" />
+                    </a>
+
                     <Link
                         href={route('logout')}
                         method="post"

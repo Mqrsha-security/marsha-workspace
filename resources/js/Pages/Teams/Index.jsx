@@ -3,6 +3,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import GithubIcon from '@/components/GithubIcon';
 import {
     ShieldCheck,
     Mail,
@@ -33,12 +34,24 @@ export default function TeamsIndex({ members = [], counts = {} }) {
                         </p>
                     </div>
 
-                    <Link href={route('tasks.index')}>
-                        <Button variant="outline" size="sm" className="text-xs gap-1.5 h-8">
-                            <ListTodo className="h-3.5 w-3.5" />
-                            Task Board
-                        </Button>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <a
+                            href="https://github.com/Mqrsha-security"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button variant="outline" size="sm" className="text-xs gap-1.5 h-8">
+                                <GithubIcon className="h-3.5 w-3.5" />
+                                GitHub Org
+                            </Button>
+                        </a>
+                        <Link href={route('tasks.index')}>
+                            <Button variant="outline" size="sm" className="text-xs gap-1.5 h-8">
+                                <ListTodo className="h-3.5 w-3.5" />
+                                Task Board
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Team Members List with spacious separate horizontal cards */}
