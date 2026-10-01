@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import ThemeToggle from '@/components/ThemeToggle';
+import PixelOffice from '@/components/PixelOffice';
 import {
     GraduationCap,
     CheckCircle2,
@@ -18,7 +19,7 @@ import {
 } from 'lucide-react';
 
 export default function AppLayout({ children, currentScope = 'all', counts = {}, currentNav = '' }) {
-    const { auth } = usePage().props;
+    const { auth, active_tasks = [] } = usePage().props;
     const user = auth.user;
 
     const getInitials = (name) => {
@@ -90,6 +91,9 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         <span className="text-[10px] text-slate-400 dark:text-slate-500">• Active</span>
                     </div>
                 </div>
+
+                {/* Pixel Office Companion Room */}
+                <PixelOffice activeTasks={active_tasks} />
 
                 {/* Navigation Links */}
                 <nav className="flex-1 px-3 py-3 space-y-4 overflow-y-auto">

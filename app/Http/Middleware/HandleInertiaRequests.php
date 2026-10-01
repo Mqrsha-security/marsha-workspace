@@ -46,6 +46,13 @@ class HandleInertiaRequests extends Middleware
                         ->count()
                     : 0,
             ],
+            'active_tasks' => $request->user()
+                ? \App\Models\Task::select('id', 'title', 'status', 'priority', 'assigned_to', 'created_by')
+                    ->whereIn('status', ['todo', 'in_progress', 'revisi'])
+                    ->latest('updated_at')
+                    ->take(8)
+                    ->get()
+                : [],
         ];
     }
 }
