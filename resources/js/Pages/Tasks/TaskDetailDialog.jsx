@@ -44,6 +44,7 @@ export default function TaskDetailDialog({ open, onOpenChange, task, onEdit, use
     const [newComment, setNewComment] = useState('');
     const [submittingComment, setSubmittingComment] = useState(false);
     const [selectedTabIdx, setSelectedTabIdx] = useState(0);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     const tabs = task.tabs_list && task.tabs_list.length > 0
         ? task.tabs_list
@@ -89,29 +90,22 @@ export default function TaskDetailDialog({ open, onOpenChange, task, onEdit, use
 
     const handleStatusChange = (status) => {
         if (!isAssignee) return;
-        let revisionNotes = task.revision_notes;
-        if (status === 'revisi') {
-            const promptNotes = window.prompt('Enter revision notes:', task.revision_notes || '');
-            if (promptNotes !== null) {
-                revisionNotes = promptNotes;
-            }
-        }
-
         router.patch(route('tasks.status', task.id), {
             status,
-            revision_notes: revisionNotes,
+            revision_notes: task.revision_notes || '',
         }, {
             preserveScroll: true,
         });
     };
 
-    const handleDelete = () => {
+    const executeDelete = () => {
         if (!isAssignee) return;
-        if (window.confirm('Delete this task?')) {
-            router.delete(route('tasks.destroy', task.id), {
-                onSuccess: () => onOpenChange(false),
-            });
-        }
+        router.delete(route('tasks.destroy', task.id), {
+            onSuccess: () => {
+                setConfirmingDelete(false);
+                onOpenChange(false);
+            },
+        });
     };
 
     const handleAddComment = (e) => {
@@ -151,7 +145,7 @@ export default function TaskDetailDialog({ open, onOpenChange, task, onEdit, use
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 p-5">
-                <DialogHeader className="space-y-1.5 pb-1">
+                <DialogHeader className="space-y-1.5 pb-1 pr-10 sm:pr-12">
                     <div className="flex items-center justify-between gap-2">
                         <Badge variant="outline" className="text-[11px] bg-slate-50 dark:bg-slate-800">
                             {task.category}
@@ -607,15 +601,37 @@ export default function TaskDetailDialog({ open, onOpenChange, task, onEdit, use
                     <div className="pt-2 flex justify-between items-center border-t border-slate-100 dark:border-slate-800">
                         {isAssignee ? (
                             <>
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={handleDelete}
-                                    className="text-xs h-7 gap-1"
-                                >
-                                    <Trash2 className="h-3 w-3" />
-                                    Delete
-                                </Button>
+                                {confirmingDelete ? (
+                                    <div className="flex items-center gap-1.5">
+                                        <span className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold">Delete task?</span>
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={executeDelete}
+                                            className="text-xs h-7 px-2"
+                                        >
+                                            Yes, Delete
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setConfirmingDelete(false)}
+                                            className="text-xs h-7 px-2"
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <Button
+                                        variant="destructive"
+                                        size="sm"
+                                        onClick={() => setConfirmingDelete(true)}
+                                        className="text-xs h-7 gap-1"
+                                    >
+                                        <Trash2 className="h-3 w-3" />
+                                        Delete
+                                    </Button>
+                                )}
                                 <Button
                                     variant="outline"
                                     size="sm"

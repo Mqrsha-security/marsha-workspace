@@ -35,6 +35,7 @@ import {
     CheckCircle2,
     ArrowUpRight,
     X,
+    AlertTriangle,
 } from 'lucide-react';
 
 function AppBrandIcon({ iconKey, appName, className = 'h-6 w-6' }) {
@@ -149,9 +150,13 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [appToDelete, setAppToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [formError, setFormError] = useState('');
 
     const openCreateModal = () => {
         setEditingApp(null);
+        setFormError('');
         setFormData({
             title: '',
             app_name: 'Google Docs',
@@ -165,6 +170,7 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
 
     const openEditModal = (app) => {
         setEditingApp(app);
+        setFormError('');
         setFormData({
             title: app.title || '',
             app_name: app.app_name || '',
@@ -204,10 +210,11 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
 
         const cleanLinks = formData.links.filter((l) => l.title.trim() !== '' && l.url.trim() !== '');
         if (cleanLinks.length === 0) {
-            alert('Mohon cantumkan minimal 1 tautan tautan yang valid');
+            setFormError('Mohon cantumkan minimal 1 tautan yang valid');
             setIsSubmitting(false);
             return;
         }
+        setFormError('');
 
         const payload = {
             ...formData,
@@ -231,10 +238,20 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
         }
     };
 
-    const handleDelete = (id) => {
-        if (confirm('Hapus tautan integrasi aplikasi ini dari workspace?')) {
-            router.delete(route('applications.destroy', id));
-        }
+    const openDeleteAppDialog = (app) => {
+        setAppToDelete(app);
+    };
+
+    const confirmDeleteApp = () => {
+        if (!appToDelete) return;
+        setIsDeleting(true);
+        router.delete(route('applications.destroy', appToDelete.id), {
+            preserveScroll: true,
+            onFinish: () => {
+                setIsDeleting(false);
+                setAppToDelete(null);
+            },
+        });
     };
 
     const filteredApps = apps.filter((app) => {
@@ -439,7 +456,7 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
                                                 <Edit2 className="h-3.5 w-3.5" />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(app.id)}
+                                                onClick={() => openDeleteAppDialog(app)}
                                                 className="p-1 rounded-md text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
                                                 title="Delete"
                                             >
@@ -505,13 +522,20 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
             {/* Create & Edit Modal */}
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
+                    <DialogHeader className="pr-10 sm:pr-12">
                         <DialogTitle className="text-base font-bold text-slate-900 dark:text-slate-100">
                             {editingApp ? 'Edit Application Connection' : 'Connect New Application'}
                         </DialogTitle>
                     </DialogHeader>
 
                     <form onSubmit={handleSubmit} className="space-y-4 pt-2">
+                        {formError && (
+                            <div className="p-2.5 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4 shrink-0" />
+                                <span>{formError}</span>
+                            </div>
+                        )}
+
                         {/* Quick Presets */}
                         <div className="space-y-2 p-3 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60">
                             <div className="flex items-center justify-between">
@@ -771,6 +795,48 @@ export default function ApplicationsIndex({ apps = [], counts = {}, filters = {}
                             </Button>
                         </DialogFooter>
                     </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Custom Delete Confirmation Modal */}
+            <Dialog open={Boolean(appToDelete)} onOpenChange={(open) => !open && setAppToDelete(null)}>
+                <DialogContent className="max-w-md p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+                    <div className="flex items-start gap-3.5">
+                        <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 flex items-center justify-center shrink-0 text-rose-600 dark:text-rose-400">
+                            <AlertTriangle className="h-5 w-5" />
+                        </div>
+                        <div className="space-y-1.5 flex-1 pr-6">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                                Hapus Integrasi Aplikasi
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Apakah Anda yakin ingin menghapus tautan <span className="font-semibold text-slate-800 dark:text-slate-200">{appToDelete?.title}</span>? Tautan ini akan dihapus dari workspace bersama.
+                            </p>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="pt-4 mt-2 border-t border-slate-100 dark:border-slate-800 gap-2 sm:gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={isDeleting}
+                            onClick={() => setAppToDelete(null)}
+                            className="text-xs h-8"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            disabled={isDeleting}
+                            onClick={confirmDeleteApp}
+                            className="bg-rose-600 hover:bg-rose-700 text-white text-xs h-8 gap-1.5 shadow-xs"
+                        >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {isDeleting ? 'Menghapus...' : 'Hapus Aplikasi'}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </AppLayout>

@@ -37,6 +37,7 @@ import {
     BookOpen,
     Eye,
     FileText,
+    AlertTriangle,
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -72,6 +73,27 @@ const CATEGORY_COLORS = {
     'Code Review': 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
 };
 
+const getCategoryBadgeClass = (category) => {
+    if (!category) return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700';
+    if (CATEGORY_COLORS[category]) {
+        return CATEGORY_COLORS[category];
+    }
+    const colorVariants = [
+        'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
+        'bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+        'bg-teal-50 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300 border-teal-200 dark:border-teal-800',
+        'bg-sky-50 text-sky-700 dark:bg-sky-950/50 dark:text-sky-300 border-sky-200 dark:border-sky-800',
+        'bg-violet-50 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300 border-violet-200 dark:border-violet-800',
+        'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    ];
+    let hash = 0;
+    for (let i = 0; i < category.length; i++) {
+        hash = category.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colorVariants.length;
+    return colorVariants[index];
+};
+
 export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}, categories = [] }) {
     const [search, setSearch] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
@@ -84,6 +106,26 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
     const [editingMeeting, setEditingMeeting] = useState(null);
     const [activeImageViewer, setActiveImageViewer] = useState(null);
     const [copiedId, setCopiedId] = useState(null);
+
+    // Delete confirmation dialog
+    const [meetingToDelete, setMeetingToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    // Dynamic category selection & creation
+    const defaultCategories = useMemo(() => [
+        'Thesis Advisory',
+        'Security Architecture',
+        'Progress Review',
+        'Seminar & Defense',
+        'Code Review',
+    ], []);
+
+    const availableCategories = useMemo(() => {
+        const set = new Set([...defaultCategories, ...(categories || []), ...meetings.map((m) => m.category).filter(Boolean)]);
+        return Array.from(set);
+    }, [defaultCategories, categories, meetings]);
+
+    const [isCustomCategory, setIsCustomCategory] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -130,9 +172,10 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
 
     const openCreateModal = () => {
         setEditingMeeting(null);
+        setIsCustomCategory(false);
         setFormData({
             title: '',
-            category: 'Thesis Advisory',
+            category: availableCategories[0] || 'Thesis Advisory',
             meeting_date: new Date().toISOString().split('T')[0],
             start_time: '09:30',
             end_time: '11:00',
@@ -150,6 +193,8 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
 
     const openEditModal = (meeting) => {
         setEditingMeeting(meeting);
+        const isPredefined = availableCategories.includes(meeting.category);
+        setIsCustomCategory(!isPredefined && Boolean(meeting.category));
         setFormData({
             title: meeting.title || '',
             category: meeting.category || 'Thesis Advisory',
@@ -177,12 +222,14 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
         e.preventDefault();
         setIsSubmitting(true);
 
+        const cleanCategory = (formData.category || '').trim() || 'Thesis Advisory';
         const cleanPoints = (formData.points || []).map((p) => (typeof p === 'string' ? p.trim() : '')).filter(Boolean);
         const cleanActionItems = (formData.action_items || []).filter((item) => item.task && item.task.trim() !== '');
         const cleanReferences = (formData.reference_links || []).filter((ref) => ref.title && ref.url && ref.title.trim() !== '');
 
         const payload = {
             ...formData,
+            category: cleanCategory,
             points: cleanPoints,
             action_items: cleanActionItems,
             reference_links: cleanReferences,
@@ -209,17 +256,25 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
         }
     };
 
-    const handleDelete = (meetingId) => {
-        if (confirm('Delete this meeting record? This action cannot be undone.')) {
-            router.delete(route('meetings.destroy', meetingId), {
-                preserveScroll: true,
-                onSuccess: () => {
-                    if (selectedMeeting?.id === meetingId) {
-                        setIsDetailModalOpen(false);
-                    }
-                },
-            });
-        }
+    const openDeleteDialog = (meeting) => {
+        setMeetingToDelete(meeting);
+    };
+
+    const confirmDelete = () => {
+        if (!meetingToDelete) return;
+        setIsDeleting(true);
+        router.delete(route('meetings.destroy', meetingToDelete.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsDeleting(false);
+                if (selectedMeeting?.id === meetingToDelete.id) {
+                    setIsDetailModalOpen(false);
+                    setSelectedMeeting(null);
+                }
+                setMeetingToDelete(null);
+            },
+            onError: () => setIsDeleting(false),
+        });
     };
 
     // Client-side image upload & canvas compression to lightweight webp/jpeg base64
@@ -445,7 +500,7 @@ _Recorded via Marsha Security Workspace_`;
                             className="h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-hidden"
                         >
                             <option value="all">All Categories</option>
-                            {categories.map((c) => (
+                            {availableCategories.map((c) => (
                                 <option key={c} value={c}>
                                     {c}
                                 </option>
@@ -477,7 +532,7 @@ _Recorded via Marsha Security Workspace_`;
                                             meeting.location?.toLowerCase().includes('zoom');
 
                             const statusInfo = STATUS_CONFIG[meeting.status] || STATUS_CONFIG.scheduled;
-                            const categoryStyle = CATEGORY_COLORS[meeting.category] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700';
+                            const categoryStyle = getCategoryBadgeClass(meeting.category);
 
                             return (
                                 <Card
@@ -691,7 +746,7 @@ _Recorded via Marsha Security Workspace_`;
                                                 <Edit2 className="h-3.5 w-3.5" />
                                             </Button>
                                             <Button
-                                                onClick={() => handleDelete(meeting.id)}
+                                                onClick={() => openDeleteDialog(meeting)}
                                                 variant="ghost"
                                                 size="sm"
                                                 className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
@@ -711,7 +766,7 @@ _Recorded via Marsha Security Workspace_`;
             {/* Create / Edit Meeting Dialog */}
             <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
-                    <DialogHeader>
+                    <DialogHeader className="pr-10 sm:pr-12">
                         <DialogTitle className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                             <CalendarDays className="h-4 w-4" />
                             {editingMeeting ? 'Edit Meeting Record' : 'Create New Meeting'}
@@ -736,21 +791,58 @@ _Recorded via Marsha Security Workspace_`;
                         {/* Category & Status */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="space-y-1">
-                                <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Category
-                                </label>
-                                <select
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    aria-label="Category"
-                                    className="w-full h-9 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden"
-                                >
-                                    <option value="Thesis Advisory">Thesis Advisory</option>
-                                    <option value="Security Architecture">Security Architecture</option>
-                                    <option value="Progress Review">Progress Review</option>
-                                    <option value="Seminar & Defense">Seminar & Defense</option>
-                                    <option value="Code Review">Code Review</option>
-                                </select>
+                                <div className="flex items-center justify-between">
+                                    <label className="font-semibold text-slate-700 dark:text-slate-300">
+                                        Category *
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const nextCustom = !isCustomCategory;
+                                            setIsCustomCategory(nextCustom);
+                                            if (nextCustom) {
+                                                setFormData({ ...formData, category: '' });
+                                            } else {
+                                                setFormData({ ...formData, category: availableCategories[0] || 'Thesis Advisory' });
+                                            }
+                                        }}
+                                        className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                                    >
+                                        {isCustomCategory ? '← Choose list' : '+ Add custom'}
+                                    </button>
+                                </div>
+
+                                {isCustomCategory ? (
+                                    <Input
+                                        required
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        placeholder="Type custom category name (e.g. Threat Modeling Lab)"
+                                        className="text-xs h-9 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+                                        autoFocus
+                                    />
+                                ) : (
+                                    <select
+                                        value={formData.category}
+                                        onChange={(e) => {
+                                            if (e.target.value === '__custom__') {
+                                                setIsCustomCategory(true);
+                                                setFormData({ ...formData, category: '' });
+                                            } else {
+                                                setFormData({ ...formData, category: e.target.value });
+                                            }
+                                        }}
+                                        aria-label="Category"
+                                        className="w-full h-9 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden"
+                                    >
+                                        {availableCategories.map((cat) => (
+                                            <option key={cat} value={cat}>
+                                                {cat}
+                                            </option>
+                                        ))}
+                                        <option value="__custom__">+ Add Custom Category...</option>
+                                    </select>
+                                )}
                             </div>
 
                             <div className="space-y-1">
@@ -1198,9 +1290,9 @@ _Recorded via Marsha Security Workspace_`;
             {selectedMeeting && (
                 <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 space-y-4">
-                        <DialogHeader>
+                        <DialogHeader className="pr-10 sm:pr-12">
                             <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-slate-800">
-                                <Badge variant="outline" className={`text-xs px-2.5 py-0.5 rounded-md ${CATEGORY_COLORS[selectedMeeting.category] || ''}`}>
+                                <Badge variant="outline" className={`text-xs px-2.5 py-0.5 rounded-md ${getCategoryBadgeClass(selectedMeeting.category)}`}>
                                     {selectedMeeting.category}
                                 </Badge>
                                 <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-0.5 rounded-full border ${STATUS_CONFIG[selectedMeeting.status]?.color}`}>
@@ -1396,6 +1488,15 @@ _Recorded via Marsha Security Workspace_`;
 
                             <div className="flex items-center gap-2">
                                 <Button
+                                    onClick={() => openDeleteDialog(selectedMeeting)}
+                                    variant="ghost"
+                                    size="sm"
+                                    className="text-xs h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 gap-1"
+                                >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    Delete
+                                </Button>
+                                <Button
                                     onClick={() => {
                                         setIsDetailModalOpen(false);
                                         openEditModal(selectedMeeting);
@@ -1423,7 +1524,7 @@ _Recorded via Marsha Security Workspace_`;
             {/* Enlarged Image Viewer Dialog */}
             {activeImageViewer && (
                 <Dialog open={Boolean(activeImageViewer)} onOpenChange={() => setActiveImageViewer(null)}>
-                    <DialogContent className="max-w-3xl p-3 bg-black/95 border-slate-800 text-white">
+                    <DialogContent className="max-w-3xl p-3 bg-black/95 border-slate-800 text-white" hideCloseButton={true}>
                         <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                             <span className="text-xs font-semibold truncate text-slate-300">
                                 {activeImageViewer.caption || 'Image Preview'}
@@ -1445,6 +1546,48 @@ _Recorded via Marsha Security Workspace_`;
                     </DialogContent>
                 </Dialog>
             )}
+
+            {/* Custom Delete Confirmation Modal */}
+            <Dialog open={Boolean(meetingToDelete)} onOpenChange={(open) => !open && setMeetingToDelete(null)}>
+                <DialogContent className="max-w-md p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+                    <div className="flex items-start gap-3.5">
+                        <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 flex items-center justify-center shrink-0 text-rose-600 dark:text-rose-400">
+                            <AlertTriangle className="h-5 w-5" />
+                        </div>
+                        <div className="space-y-1.5 flex-1 pr-6">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                                Delete Meeting Record
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Are you sure you want to delete <span className="font-semibold text-slate-800 dark:text-slate-200">{meetingToDelete?.title}</span>? All discussion minutes, attachments, and action items will be permanently removed.
+                            </p>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="pt-4 mt-2 border-t border-slate-100 dark:border-slate-800 gap-2 sm:gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={isDeleting}
+                            onClick={() => setMeetingToDelete(null)}
+                            className="text-xs h-8"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            disabled={isDeleting}
+                            onClick={confirmDelete}
+                            className="bg-rose-600 hover:bg-rose-700 text-white text-xs h-8 gap-1.5 shadow-xs"
+                        >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {isDeleting ? 'Deleting...' : 'Delete Meeting'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AppLayout>
     );
 }

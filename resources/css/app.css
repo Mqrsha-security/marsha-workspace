@@ -172,3 +172,53 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Sleek Modern Custom Scrollbar across the entire application */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.75);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.28);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+html.pink ::-webkit-scrollbar-thumb {
+  background: rgba(225, 29, 104, 0.3);
+}
+
+html.pink ::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 29, 104, 0.6);
+}
+
+/* Firefox scrollbar support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgba(148, 163, 184, 0.28) transparent;
+}
+
+html.pink * {
+  scrollbar-color: rgba(225, 29, 104, 0.3) transparent;
+}
