@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage, router } from '@inertiajs/react';
 import {
     Dialog,
     DialogContent,
@@ -25,6 +25,7 @@ import {
     ListTodo,
     FolderKanban,
     Layers,
+    AlertTriangle,
 } from 'lucide-react';
 
 export default function TaskModal({ open, onOpenChange, task = null, users = [], categories = [] }) {
@@ -33,6 +34,22 @@ export default function TaskModal({ open, onOpenChange, task = null, users = [],
     const currentUserId = auth.user?.id;
 
     const [activeTabIndex, setActiveTabIndex] = useState(0);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteTask = () => {
+        if (!task?.id) return;
+        setIsDeleting(true);
+        router.delete(route('tasks.destroy', task.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsDeleting(false);
+                setIsDeleteDialogOpen(false);
+                onOpenChange(false);
+            },
+            onError: () => setIsDeleting(false),
+        });
+    };
 
     const formatDateTimeLocal = (dateStr) => {
         if (!dateStr) {
@@ -207,9 +224,10 @@ export default function TaskModal({ open, onOpenChange, task = null, users = [],
     const activeTab = data.tabs[activeTabIndex] || data.tabs[0];
 
     return (
+        <>
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-2xl max-h-[92vh] overflow-y-auto bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 p-5">
-                <DialogHeader className="pb-1">
+                <DialogHeader className="pb-1 pr-10 sm:pr-12">
                     <DialogTitle className="text-base font-bold">
                         {isEdit ? 'Edit Task & Workstreams' : 'New Task & Workstreams'}
                     </DialogTitle>
@@ -555,28 +573,88 @@ export default function TaskModal({ open, onOpenChange, task = null, users = [],
                         </div>
                     )}
 
-                    <DialogFooter className="pt-1">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => onOpenChange(false)}
-                            disabled={processing}
-                            className="text-xs h-8 border-slate-200 dark:border-slate-800"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            size="sm"
-                            disabled={processing}
-                            className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white text-xs h-8"
-                        >
-                            {processing ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Task'}
-                        </Button>
+                    <DialogFooter className="pt-2 flex items-center justify-between sm:justify-between w-full">
+                        {isEdit ? (
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setIsDeleteDialogOpen(true)}
+                                className="text-xs h-8 text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/40 gap-1.5"
+                            >
+                                <Trash2 className="h-3.5 w-3.5" />
+                                Delete Task
+                            </Button>
+                        ) : <div />}
+
+                        <div className="flex items-center gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => onOpenChange(false)}
+                                disabled={processing}
+                                className="text-xs h-8 border-slate-200 dark:border-slate-800"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                size="sm"
+                                disabled={processing}
+                                className="bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white text-xs h-8"
+                            >
+                                {processing ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Task'}
+                            </Button>
+                        </div>
                     </DialogFooter>
                 </form>
             </DialogContent>
         </Dialog>
+
+        {/* Custom Delete Confirmation Modal */}
+        {isEdit && (
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="max-w-md p-5 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+                    <div className="flex items-start gap-3.5">
+                        <div className="h-10 w-10 rounded-full bg-rose-100 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 flex items-center justify-center shrink-0 text-rose-600 dark:text-rose-400">
+                            <AlertTriangle className="h-5 w-5" />
+                        </div>
+                        <div className="space-y-1.5 flex-1 pr-6">
+                            <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                                Delete Task
+                            </h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                                Are you sure you want to delete <span className="font-semibold text-slate-800 dark:text-slate-200">{task?.title}</span>? All workstream items, activity comments, and progress will be permanently removed.
+                            </p>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="pt-4 mt-2 border-t border-slate-100 dark:border-slate-800 gap-2 sm:gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={isDeleting}
+                            onClick={() => setIsDeleteDialogOpen(false)}
+                            className="text-xs h-8"
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            size="sm"
+                            disabled={isDeleting}
+                            onClick={handleDeleteTask}
+                            className="bg-rose-600 hover:bg-rose-700 text-white text-xs h-8 gap-1.5 shadow-xs"
+                        >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {isDeleting ? 'Deleting...' : 'Delete Task'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        )}
+        </>
     );
 }
