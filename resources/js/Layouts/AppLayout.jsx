@@ -18,6 +18,7 @@ import {
     LayoutDashboard,
     Users,
     AppWindow,
+    CalendarDays,
     Menu,
     X,
     ExternalLink,
@@ -204,7 +205,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                             href={route('tasks.index')}
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications'
+                                currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -215,7 +216,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                             </span>
                             {counts.total !== undefined && (
                                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                                    currentScope === 'all'
+                                    currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings'
                                         ? 'bg-slate-700 dark:bg-slate-700 text-slate-200'
                                         : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                 }`}>
@@ -248,7 +249,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                             href={route('tasks.created')}
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'assigned_by_me' && currentNav !== 'teams' && currentNav !== 'applications'
+                                currentScope === 'assigned_by_me' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -279,6 +280,30 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                                         : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                 }`}>
                                     {counts.apps_count}
+                                </span>
+                            )}
+                        </Link>
+
+                        <Link
+                            href={route('meetings.index')}
+                            onClick={closeMobileMenu}
+                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                                currentNav === 'meetings'
+                                    ? 'bg-slate-900 dark:bg-slate-800 text-white'
+                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <CalendarDays className="h-3.5 w-3.5" />
+                                Meetings
+                            </span>
+                            {counts.meetings_count !== undefined && (
+                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                                    currentNav === 'meetings'
+                                        ? 'bg-slate-700 dark:bg-slate-700 text-slate-200'
+                                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                }`}>
+                                    {counts.meetings_count}
                                 </span>
                             )}
                         </Link>

@@ -23,6 +23,8 @@ class TeamController extends Controller
             'revisi' => Task::where('status', 'revisi')->count(),
             'done' => Task::where('status', 'done')->count(),
             'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
+            'apps_count' => rescue(fn () => \App\Models\WorkspaceApp::count(), fn () => 0),
+            'meetings_count' => rescue(fn () => \App\Models\Meeting::count(), fn () => 0),
         ];
 
         $members = User::withCount([

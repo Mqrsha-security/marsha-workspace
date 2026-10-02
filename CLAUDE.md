@@ -28,7 +28,7 @@ This document is the single source of truth for AI agents working in this reposi
 
 ### Local Database & Testing
 * Local environment uses MySQL or SQLite (configured in `.env`).
-* Automated tests run via `php artisan test` (38 tests, all must pass).
+* Automated tests run via `php artisan test` (43 tests, all must pass).
 
 ---
 
@@ -38,8 +38,9 @@ This document is the single source of truth for AI agents working in this reposi
    * Appends: `photo_url`, `is_active` (`last_seen_at >= now() - 25s`), `last_seen_formatted`.
 2. `tasks`: `id`, `title`, `description`, `link`, `descriptions` (jsonb), `links` (jsonb), `tabs` (jsonb), `category`, `status` (`todo`, `in_progress`, `revisi`, `done`), `priority` (`low`, `medium`, `high`, `urgent`), `created_by`, `assigned_to`, `due_at`, `completed_at`, `revision_notes`, `timestamps`.
 3. `workspace_apps`: `id`, `title`, `app_name`, `category`, `description`, `links` (jsonb), `icon_key`, `created_by`, `timestamps`.
-4. `app_notifications`: `id`, `user_id`, `sender_id`, `task_id`, `type`, `title`, `message`, `is_read`, `read_at`, `timestamps`.
-5. `task_comments`: `id`, `task_id`, `user_id`, `comment`, `timestamps`.
+4. `meetings`: `id`, `title`, `category`, `meeting_date`, `start_time`, `end_time`, `location`, `status`, `attendees` (jsonb), `points` (jsonb), `action_items` (jsonb), `reference_links` (jsonb), `images` (jsonb), `notes`, `created_by`, `timestamps`.
+5. `app_notifications`: `id`, `user_id`, `sender_id`, `task_id`, `type`, `title`, `message`, `is_read`, `read_at`, `timestamps`.
+6. `task_comments`: `id`, `task_id`, `user_id`, `comment`, `timestamps`.
 
 ---
 

@@ -32,6 +32,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/applications/{application}', [\App\Http\Controllers\WorkspaceAppController::class, 'update'])->name('applications.update');
     Route::delete('/applications/{application}', [\App\Http\Controllers\WorkspaceAppController::class, 'destroy'])->name('applications.destroy');
 
+    Route::get('/meetings', [\App\Http\Controllers\MeetingController::class, 'index'])->name('meetings.index');
+    Route::post('/meetings', [\App\Http\Controllers\MeetingController::class, 'store'])->name('meetings.store');
+    Route::put('/meetings/{meeting}', [\App\Http\Controllers\MeetingController::class, 'update'])->name('meetings.update');
+    Route::delete('/meetings/{meeting}', [\App\Http\Controllers\MeetingController::class, 'destroy'])->name('meetings.destroy');
+
     Route::post('/presence/ping', [\App\Http\Controllers\PresenceController::class, 'ping'])->name('presence.ping');
     Route::get('/presence/users', [\App\Http\Controllers\PresenceController::class, 'users'])->name('presence.users');
 

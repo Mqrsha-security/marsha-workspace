@@ -91,6 +91,24 @@ Marsha Security Workspace (`marsha-workspace`) is a mission-critical project coo
 * `created_by` (BIGINT, Foreign Key -> `users.id` NULL ON DELETE)
 * `timestamps`
 
+### `meetings`
+* `id` (BIGINT, Primary Key)
+* `title` (VARCHAR 255) — Topik pertemuan / judul bimbingan
+* `category` (VARCHAR 100) — Bimbingan Skripsi, Security Architecture, Progress Review, Sidang / Seminar, Code Review
+* `meeting_date` (DATE) — Tanggal pelaksanaan
+* `start_time` (VARCHAR 10 NULL) — Jam mulai
+* `end_time` (VARCHAR 10 NULL) — Jam selesai
+* `location` (VARCHAR 255) — Lokasi ruangan atau tautan platform meeting
+* `status` (VARCHAR 50) — scheduled, ongoing, completed, cancelled
+* `attendees` (JSONB NULL) — Array nama peserta pertemuan
+* `points` (JSONB NULL) — Array poin pembahasan notulensi
+* `action_items` (JSONB NULL) — Array tugas tindak lanjut `{ task, assignee, completed }`
+* `reference_links` (JSONB NULL) — Array tautan dokumen `{ title, url }`
+* `images` (JSONB NULL) — Array foto whiteboard / diagram `{ url, caption }`
+* `notes` (TEXT NULL) — Catatan umum evaluasi
+* `created_by` (BIGINT, Foreign Key -> `users.id` NULL ON DELETE)
+* `timestamps`
+
 ### `app_notifications`
 * `id` (BIGINT, Primary Key)
 * `user_id` (BIGINT, Foreign Key -> `users.id`)

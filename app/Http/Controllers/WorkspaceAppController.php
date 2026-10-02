@@ -43,6 +43,7 @@ class WorkspaceAppController extends Controller
             'done' => Task::where('status', 'done')->count(),
             'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
             'apps_count' => WorkspaceApp::count(),
+            'meetings_count' => rescue(fn () => \App\Models\Meeting::count(), fn () => 0),
         ];
 
         $categories = WorkspaceApp::distinct()->pluck('category')->filter()->values();
