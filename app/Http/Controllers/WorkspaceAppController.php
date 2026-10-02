@@ -34,18 +34,7 @@ class WorkspaceAppController extends Controller
 
         $apps = $query->get();
 
-        $counts = [
-            'total' => Task::count(),
-            'my_tasks' => Task::where('assigned_to', $user->id)->count(),
-            'todo' => Task::where('status', 'todo')->count(),
-            'in_progress' => Task::where('status', 'in_progress')->count(),
-            'revisi' => Task::where('status', 'revisi')->count(),
-            'done' => Task::where('status', 'done')->count(),
-            'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
-            'apps_count' => WorkspaceApp::count(),
-            'meetings_count' => rescue(fn () => \App\Models\Meeting::count(), fn () => 0),
-            'notes_count' => rescue(fn () => \App\Models\MeetingNote::count(), fn () => 0),
-        ];
+        $counts = \App\Services\WorkspaceMetricsService::getCounts($user->id);
 
         $categories = WorkspaceApp::distinct()->pluck('category')->filter()->values();
 
@@ -83,6 +72,8 @@ class WorkspaceAppController extends Controller
             'created_by' => Auth::id(),
         ]);
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back();
     }
 
@@ -108,12 +99,16 @@ class WorkspaceAppController extends Controller
             'links' => $validated['links'],
         ]);
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back();
     }
 
     public function destroy(WorkspaceApp $application): RedirectResponse
     {
         $application->delete();
+
+        \App\Services\WorkspaceMetricsService::clear();
 
         return redirect()->back();
     }

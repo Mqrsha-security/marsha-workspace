@@ -204,6 +204,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         </div>
                         <Link
                             href={route('tasks.index')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings' && currentNav !== 'notes'
@@ -228,6 +229,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.assigned')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'assigned_to_me'
@@ -248,6 +250,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.created')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentScope === 'assigned_by_me' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings'
@@ -263,6 +266,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('applications.index')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentNav === 'applications'
@@ -296,6 +300,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('meetings.index')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentNav === 'meetings'
@@ -320,6 +325,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('notes.index')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentNav === 'notes'
@@ -344,6 +350,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('teams.index')}
+                            prefetch
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
                                 currentNav === 'teams'
@@ -371,6 +378,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'revisi' })}
+                            prefetch
                             onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40"
                         >
@@ -385,6 +393,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'in_progress' })}
+                            prefetch
                             onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40"
                         >
@@ -399,6 +408,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'todo' })}
+                            prefetch
                             onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                         >
@@ -413,6 +423,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
 
                         <Link
                             href={route('tasks.index', { status: 'done' })}
+                            prefetch
                             onClick={closeMobileMenu}
                             className="flex items-center justify-between px-2.5 py-1 rounded-md text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
                         >

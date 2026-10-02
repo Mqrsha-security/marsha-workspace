@@ -42,20 +42,7 @@ class MeetingNoteController extends Controller
             ->latest('meeting_date')
             ->get();
 
-        $counts = [
-            'total' => Task::count(),
-            'my_tasks' => Task::where('assigned_to', $user?->id)->count(),
-            'todo' => Task::where('status', 'todo')->count(),
-            'in_progress' => Task::where('status', 'in_progress')->count(),
-            'revisi' => Task::where('status', 'revisi')->count(),
-            'done' => Task::where('status', 'done')->count(),
-            'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
-            'apps_count' => rescue(fn () => WorkspaceApp::count(), fn () => 0),
-            'meetings_count' => rescue(fn () => Meeting::count(), fn () => 0),
-            'notes_count' => rescue(fn () => MeetingNote::count(), fn () => 0),
-            'scheduled_meetings' => rescue(fn () => Meeting::where('status', 'scheduled')->count(), fn () => 0),
-            'completed_meetings' => rescue(fn () => Meeting::where('status', 'completed')->count(), fn () => 0),
-        ];
+        $counts = \App\Services\WorkspaceMetricsService::getCounts($user?->id);
 
         return Inertia::render('Notes/Index', [
             'notes' => $notes,
@@ -91,6 +78,8 @@ class MeetingNoteController extends Controller
             'created_by' => Auth::id(),
         ]);
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back();
     }
 
@@ -116,12 +105,16 @@ class MeetingNoteController extends Controller
             'action_items' => $validated['action_items'] ?? [],
         ]);
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back();
     }
 
     public function destroy(MeetingNote $note): RedirectResponse
     {
         $note->delete();
+
+        \App\Services\WorkspaceMetricsService::clear();
 
         return redirect()->back();
     }

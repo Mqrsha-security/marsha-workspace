@@ -45,20 +45,7 @@ class MeetingController extends Controller
 
         $meetings = $query->get();
 
-        $counts = [
-            'total' => Task::count(),
-            'my_tasks' => Task::where('assigned_to', $user?->id)->count(),
-            'todo' => Task::where('status', 'todo')->count(),
-            'in_progress' => Task::where('status', 'in_progress')->count(),
-            'revisi' => Task::where('status', 'revisi')->count(),
-            'done' => Task::where('status', 'done')->count(),
-            'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
-            'apps_count' => WorkspaceApp::count(),
-            'meetings_count' => Meeting::count(),
-            'notes_count' => rescue(fn () => MeetingNote::count(), fn () => 0),
-            'scheduled_meetings' => Meeting::where('status', 'scheduled')->count(),
-            'completed_meetings' => Meeting::where('status', 'completed')->count(),
-        ];
+        $counts = \App\Services\WorkspaceMetricsService::getCounts($user?->id);
 
         $categories = Meeting::distinct()->pluck('category')->filter()->values();
         if ($categories->isEmpty()) {
@@ -126,6 +113,8 @@ class MeetingController extends Controller
             'created_by' => Auth::id(),
         ]);
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back();
     }
 
@@ -171,12 +160,16 @@ class MeetingController extends Controller
             'notes' => $validated['notes'] ?? null,
         ]);
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back();
     }
 
     public function destroy(Meeting $meeting): RedirectResponse
     {
         $meeting->delete();
+
+        \App\Services\WorkspaceMetricsService::clear();
 
         return redirect()->back();
     }

@@ -58,19 +58,8 @@ class TaskController extends Controller
             ->orderBy('due_at', 'asc')
             ->get();
 
-        // Calculate summary counters
-        $counts = [
-            'total' => Task::count(),
-            'my_tasks' => Task::where('assigned_to', $user->id)->count(),
-            'todo' => Task::where('status', 'todo')->count(),
-            'in_progress' => Task::where('status', 'in_progress')->count(),
-            'revisi' => Task::where('status', 'revisi')->count(),
-            'done' => Task::where('status', 'done')->count(),
-            'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
-            'apps_count' => rescue(fn () => \App\Models\WorkspaceApp::count(), fn () => 0),
-            'meetings_count' => rescue(fn () => \App\Models\Meeting::count(), fn () => 0),
-            'notes_count' => rescue(fn () => \App\Models\MeetingNote::count(), fn () => 0),
-        ];
+        // Calculate summary counters using high-performance aggregated query
+        $counts = \App\Services\WorkspaceMetricsService::getCounts($user->id);
 
         $users = User::select('id', 'name', 'role', 'identifier', 'avatar_color')->get();
 
@@ -176,6 +165,8 @@ class TaskController extends Controller
             ]);
         }
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back()->with('success', 'Task created successfully.');
     }
 
@@ -260,6 +251,8 @@ class TaskController extends Controller
 
         $task->save();
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back()->with('success', 'Task updated successfully.');
     }
 
@@ -286,6 +279,8 @@ class TaskController extends Controller
         }
 
         $task->save();
+
+        \App\Services\WorkspaceMetricsService::clear();
 
         return redirect()->back()->with('success', 'Status updated successfully.');
     }
@@ -314,6 +309,8 @@ class TaskController extends Controller
             ]);
         }
 
+        \App\Services\WorkspaceMetricsService::clear();
+
         return redirect()->back()->with('success', 'Task reassigned successfully.');
     }
 
@@ -324,6 +321,8 @@ class TaskController extends Controller
         }
 
         $task->delete();
+
+        \App\Services\WorkspaceMetricsService::clear();
 
         return redirect()->back()->with('success', 'Task deleted successfully.');
     }

@@ -15,18 +15,7 @@ class TeamController extends Controller
     {
         $user = Auth::user();
 
-        $counts = [
-            'total' => Task::count(),
-            'my_tasks' => Task::where('assigned_to', $user->id)->count(),
-            'todo' => Task::where('status', 'todo')->count(),
-            'in_progress' => Task::where('status', 'in_progress')->count(),
-            'revisi' => Task::where('status', 'revisi')->count(),
-            'done' => Task::where('status', 'done')->count(),
-            'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
-            'apps_count' => rescue(fn () => \App\Models\WorkspaceApp::count(), fn () => 0),
-            'meetings_count' => rescue(fn () => \App\Models\Meeting::count(), fn () => 0),
-            'notes_count' => rescue(fn () => \App\Models\MeetingNote::count(), fn () => 0),
-        ];
+        $counts = \App\Services\WorkspaceMetricsService::getCounts($user->id);
 
         $members = User::withCount([
             'assignedTasks as total_tasks_count',
