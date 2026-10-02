@@ -60,6 +60,7 @@ class MeetingTest extends TestCase
         $this->assertDatabaseHas('meetings', [
             'title' => 'Bimbingan Bab 4: Arsitektur Keamanan',
             'location' => 'Lab Cyber Security Gedung B Lt. 3',
+            'notes' => 'Catatan penting hasil evaluasi.',
         ]);
     }
 
@@ -74,6 +75,7 @@ class MeetingTest extends TestCase
             'end_time' => '11:00',
             'location' => 'Google Meet',
             'status' => 'scheduled',
+            'notes' => 'Initial notes',
             'created_by' => $user->id,
         ]);
 
@@ -86,6 +88,7 @@ class MeetingTest extends TestCase
             'location' => 'Google Meet',
             'status' => 'completed',
             'points' => ['Pembahasan selesai'],
+            'notes' => 'Catatan pembahasan yang diperbarui.',
         ]);
 
         $response->assertRedirect();
@@ -93,6 +96,7 @@ class MeetingTest extends TestCase
             'id' => $meeting->id,
             'title' => 'Updated Meeting Title',
             'status' => 'completed',
+            'notes' => 'Catatan pembahasan yang diperbarui.',
         ]);
     }
 

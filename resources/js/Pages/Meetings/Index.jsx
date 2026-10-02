@@ -36,6 +36,7 @@ import {
     ListChecks,
     BookOpen,
     Eye,
+    FileText,
 } from 'lucide-react';
 
 const STATUS_CONFIG = {
@@ -319,7 +320,7 @@ ${actionItemsList}
 *REFERENSI MATERI:*
 ${referencesList}
 
-${meeting.notes ? `*CATATAN TAMBAHAN:*\n${meeting.notes}\n` : ''}
+${meeting.notes ? `*NOTES PEMBAHASAN (YANG SUDAH DIBAHAS):*\n${meeting.notes}\n` : ''}
 _Dicatat via Marsha Security Workspace_`;
 
         navigator.clipboard.writeText(text).then(() => {
@@ -392,7 +393,7 @@ _Dicatat via Marsha Security Workspace_`;
                     <div className="relative w-full sm:w-72">
                         <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
                         <Input
-                            placeholder="Cari topik, lokasi, notulensi..."
+                            placeholder="Cari topik, lokasi, notulensi, notes..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="pl-8 h-8 text-xs bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
@@ -579,6 +580,19 @@ _Dicatat via Marsha Security Workspace_`;
                                                         </li>
                                                     )}
                                                 </ul>
+                                            </div>
+                                        )}
+
+                                        {/* Notes Pembahasan (Yang Dibahas di Meeting) */}
+                                        {meeting.notes && (
+                                            <div className="space-y-1 p-2.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200/70 dark:border-amber-900/40">
+                                                <div className="text-[11px] font-semibold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                                                    <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                                                    <span>Notes Pembahasan (Yang Dibahas):</span>
+                                                </div>
+                                                <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-3 whitespace-pre-wrap leading-relaxed">
+                                                    {meeting.notes}
+                                                </p>
                                             </div>
                                         )}
 
@@ -1139,17 +1153,21 @@ _Dicatat via Marsha Security Workspace_`;
                             </div>
                         </div>
 
-                        {/* General Notes */}
-                        <div className="space-y-1">
-                            <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                Catatan Tambahan / Ringkasan Evaluasi
+                        {/* Discussion Notes */}
+                        <div className="space-y-1.5 p-3 rounded-lg bg-amber-50/40 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40">
+                            <label className="font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+                                <span className="flex items-center gap-1.5">
+                                    <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                                    Notes Pembahasan (Apa saja yang sudah dibahas di meeting)
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-normal">Mendukung multi paragraf</span>
                             </label>
                             <Textarea
-                                rows={3}
+                                rows={4}
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                placeholder="Tuliskan masukan dosen pembimbing, catatan kendala arsitektur keamanan, atau kesepakatan timeline sidang..."
-                                className="text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 resize-none"
+                                placeholder="Tuliskan poin hasil obrolan: apa saja yang telah dibahas bersama dosen atau rekan, argumen teknis arsitektur keamanan, kendala implementasi, dan kesepakatan solusi..."
+                                className="text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 resize-y min-h-[90px]"
                             />
                         </div>
 
@@ -1341,13 +1359,14 @@ _Dicatat via Marsha Security Workspace_`;
                             </div>
                         )}
 
-                        {/* General Notes */}
+                        {/* Discussion Notes */}
                         {selectedMeeting.notes && (
-                            <div className="space-y-1">
-                                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Catatan Tambahan
+                            <div className="space-y-1.5">
+                                <div className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                                    <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                                    Notes Pembahasan (Yang Sudah Dibahas)
                                 </div>
-                                <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-950 text-xs text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed border border-slate-200/60 dark:border-slate-800/60">
+                                <div className="p-3.5 rounded-lg bg-amber-50/60 dark:bg-amber-950/20 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed border border-amber-200/70 dark:border-amber-900/40">
                                     {selectedMeeting.notes}
                                 </div>
                             </div>
