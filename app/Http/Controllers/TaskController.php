@@ -17,7 +17,7 @@ class TaskController extends Controller
     public function index(Request $request): Response
     {
         $user = Auth::user();
-        $scope = $request->query('scope', 'all'); // 'all', 'assigned_to_me', 'assigned_by_me'
+        $scope = $request->input('scope', $request->query('scope', 'all')); // 'all', 'assigned_to_me', 'assigned_by_me'
         $status = $request->query('status');
         $priority = $request->query('priority');
         $category = $request->query('category');
@@ -29,9 +29,9 @@ class TaskController extends Controller
             'comments.user:id,name,avatar_color',
         ]);
 
-        if ($scope === 'assigned_to_me') {
+        if ($scope === 'assigned_to_me' && $user) {
             $query->where('assigned_to', $user->id);
-        } elseif ($scope === 'assigned_by_me') {
+        } elseif ($scope === 'assigned_by_me' && $user) {
             $query->where('created_by', $user->id);
         }
 
@@ -59,7 +59,7 @@ class TaskController extends Controller
             ->get();
 
         // Calculate summary counters using high-performance aggregated query
-        $counts = \App\Services\WorkspaceMetricsService::getCounts($user->id);
+        $counts = \App\Services\WorkspaceMetricsService::getCounts($user?->id);
 
         $users = User::select('id', 'name', 'role', 'identifier', 'avatar_color')->get();
 

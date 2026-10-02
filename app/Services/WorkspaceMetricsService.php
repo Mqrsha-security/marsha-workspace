@@ -20,7 +20,24 @@ class WorkspaceMetricsService
     {
         $cacheKey = 'ws_metrics_' . ($userId ?? 'guest');
 
-        return Cache::remember($cacheKey, 6, function () use ($userId) {
+        try {
+            return Cache::remember($cacheKey, 6, function () use ($userId) {
+                return self::queryCounts($userId);
+            });
+        } catch (\Throwable) {
+            return self::queryCounts($userId);
+        }
+    }
+
+    /**
+     * Direct query computation with full fallback resilience.
+     *
+     * @param int|null $userId
+     * @return array<string, int>
+     */
+    public static function queryCounts(?int $userId = null): array
+    {
+        try {
             $taskAgg = Task::query()
                 ->selectRaw("
                     COUNT(*) as total,
@@ -47,7 +64,22 @@ class WorkspaceMetricsService
                 'scheduled_meetings' => (int) rescue(fn () => Meeting::where('status', 'scheduled')->count(), fn () => 0),
                 'completed_meetings' => (int) rescue(fn () => Meeting::where('status', 'completed')->count(), fn () => 0),
             ];
-        });
+        } catch (\Throwable) {
+            return [
+                'total' => (int) rescue(fn () => Task::count(), fn () => 0),
+                'my_tasks' => (int) rescue(fn () => Task::where('assigned_to', $userId)->count(), fn () => 0),
+                'todo' => (int) rescue(fn () => Task::where('status', 'todo')->count(), fn () => 0),
+                'in_progress' => (int) rescue(fn () => Task::where('status', 'in_progress')->count(), fn () => 0),
+                'revisi' => (int) rescue(fn () => Task::where('status', 'revisi')->count(), fn () => 0),
+                'done' => (int) rescue(fn () => Task::where('status', 'done')->count(), fn () => 0),
+                'urgent' => (int) rescue(fn () => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(), fn () => 0),
+                'apps_count' => (int) rescue(fn () => WorkspaceApp::count(), fn () => 0),
+                'meetings_count' => (int) rescue(fn () => Meeting::count(), fn () => 0),
+                'notes_count' => (int) rescue(fn () => MeetingNote::count(), fn () => 0),
+                'scheduled_meetings' => (int) rescue(fn () => Meeting::where('status', 'scheduled')->count(), fn () => 0),
+                'completed_meetings' => (int) rescue(fn () => Meeting::where('status', 'completed')->count(), fn () => 0),
+            ];
+        }
     }
 
     /**
@@ -55,9 +87,12 @@ class WorkspaceMetricsService
      */
     public static function clear(?int $userId = null): void
     {
-        if ($userId) {
-            Cache::forget('ws_metrics_' . $userId);
+        try {
+            if ($userId) {
+                Cache::forget('ws_metrics_' . $userId);
+            }
+            Cache::forget('ws_metrics_guest');
+        } catch (\Throwable) {
         }
-        Cache::forget('ws_metrics_guest');
     }
 }

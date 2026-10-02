@@ -21,6 +21,24 @@ class TaskTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_authenticated_user_can_view_assigned_tasks(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('tasks.assigned'));
+
+        $response->assertStatus(200);
+    }
+
+    public function test_authenticated_user_can_view_created_tasks(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('tasks.created'));
+
+        $response->assertStatus(200);
+    }
+
     public function test_user_can_assign_task_to_another_individual(): void
     {
         $dosen = User::factory()->create(['role' => 'dosen_pembimbing']);
