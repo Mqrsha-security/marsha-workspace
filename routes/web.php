@@ -37,6 +37,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/meetings/{meeting}', [\App\Http\Controllers\MeetingController::class, 'update'])->name('meetings.update');
     Route::delete('/meetings/{meeting}', [\App\Http\Controllers\MeetingController::class, 'destroy'])->name('meetings.destroy');
 
+    Route::get('/notes', [\App\Http\Controllers\MeetingNoteController::class, 'index'])->name('notes.index');
+    Route::post('/notes', [\App\Http\Controllers\MeetingNoteController::class, 'store'])->name('notes.store');
+    Route::put('/notes/{note}', [\App\Http\Controllers\MeetingNoteController::class, 'update'])->name('notes.update');
+    Route::delete('/notes/{note}', [\App\Http\Controllers\MeetingNoteController::class, 'destroy'])->name('notes.destroy');
+
     Route::post('/presence/ping', [\App\Http\Controllers\PresenceController::class, 'ping'])->name('presence.ping');
     Route::get('/presence/users', [\App\Http\Controllers\PresenceController::class, 'users'])->name('presence.users');
 

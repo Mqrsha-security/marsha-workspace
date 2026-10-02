@@ -19,6 +19,7 @@ import {
     Users,
     AppWindow,
     CalendarDays,
+    FileText,
     Menu,
     X,
     ExternalLink,
@@ -205,7 +206,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                             href={route('tasks.index')}
                             onClick={closeMobileMenu}
                             className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                                currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings'
+                                currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings' && currentNav !== 'notes'
                                     ? 'bg-slate-900 dark:bg-slate-800 text-white'
                                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                             }`}
@@ -216,7 +217,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                             </span>
                             {counts.total !== undefined && (
                                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                                    currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings'
+                                    currentScope === 'all' && currentNav !== 'teams' && currentNav !== 'applications' && currentNav !== 'meetings' && currentNav !== 'notes'
                                         ? 'bg-slate-700 dark:bg-slate-700 text-slate-200'
                                         : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                 }`}>
@@ -304,7 +305,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         >
                             <span className="flex items-center gap-2">
                                 <CalendarDays className="h-3.5 w-3.5" />
-                                Meetings & Notes
+                                Meetings
                             </span>
                             {counts.meetings_count !== undefined && (
                                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
@@ -313,6 +314,30 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                                         : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
                                 }`}>
                                     {counts.meetings_count}
+                                </span>
+                            )}
+                        </Link>
+
+                        <Link
+                            href={route('notes.index')}
+                            onClick={closeMobileMenu}
+                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                                currentNav === 'notes'
+                                    ? 'bg-slate-900 dark:bg-slate-800 text-white'
+                                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                <FileText className="h-3.5 w-3.5" />
+                                Notes
+                            </span>
+                            {counts.notes_count !== undefined && (
+                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                                    currentNav === 'notes'
+                                        ? 'bg-slate-700 dark:bg-slate-700 text-slate-200'
+                                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                }`}>
+                                    {counts.notes_count}
                                 </span>
                             )}
                         </Link>

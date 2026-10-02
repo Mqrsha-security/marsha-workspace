@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Meeting;
+use App\Models\MeetingNote;
 use App\Models\Task;
 use App\Models\WorkspaceApp;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,10 @@ class MeetingController extends Controller
         $status = $request->query('status');
         $category = $request->query('category');
 
-        $query = Meeting::with('creator:id,name,role')->latest('meeting_date')->latest('id');
+        $query = Meeting::with('creator:id,name,role')
+            ->withCount('meetingNotes')
+            ->latest('meeting_date')
+            ->latest('id');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -51,6 +55,7 @@ class MeetingController extends Controller
             'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
             'apps_count' => WorkspaceApp::count(),
             'meetings_count' => Meeting::count(),
+            'notes_count' => rescue(fn () => MeetingNote::count(), fn () => 0),
             'scheduled_meetings' => Meeting::where('status', 'scheduled')->count(),
             'completed_meetings' => Meeting::where('status', 'completed')->count(),
         ];

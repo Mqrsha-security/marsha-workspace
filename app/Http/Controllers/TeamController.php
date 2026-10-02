@@ -25,6 +25,7 @@ class TeamController extends Controller
             'urgent' => Task::where('priority', 'urgent')->where('status', '!=', 'done')->count(),
             'apps_count' => rescue(fn () => \App\Models\WorkspaceApp::count(), fn () => 0),
             'meetings_count' => rescue(fn () => \App\Models\Meeting::count(), fn () => 0),
+            'notes_count' => rescue(fn () => \App\Models\MeetingNote::count(), fn () => 0),
         ];
 
         $members = User::withCount([
