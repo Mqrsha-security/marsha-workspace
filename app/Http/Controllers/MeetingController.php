@@ -58,10 +58,10 @@ class MeetingController extends Controller
         $categories = Meeting::distinct()->pluck('category')->filter()->values();
         if ($categories->isEmpty()) {
             $categories = collect([
-                'Bimbingan Skripsi',
+                'Thesis Advisory',
                 'Security Architecture',
                 'Progress Review',
-                'Sidang / Seminar',
+                'Seminar & Defense',
                 'Code Review',
             ]);
         }

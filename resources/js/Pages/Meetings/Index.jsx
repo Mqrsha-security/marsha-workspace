@@ -41,31 +41,33 @@ import {
 
 const STATUS_CONFIG = {
     scheduled: {
-        label: 'Terjadwal',
+        label: 'Scheduled',
         color: 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-300 dark:border-amber-800',
         dot: 'bg-amber-500',
     },
     ongoing: {
-        label: 'Sedang Berlangsung',
+        label: 'Ongoing',
         color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800',
         dot: 'bg-emerald-500 animate-pulse',
     },
     completed: {
-        label: 'Selesai',
+        label: 'Completed',
         color: 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300 border-slate-300 dark:border-slate-700',
         dot: 'bg-slate-500',
     },
     cancelled: {
-        label: 'Dibatalkan',
+        label: 'Cancelled',
         color: 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border-rose-300 dark:border-rose-800',
         dot: 'bg-rose-500',
     },
 };
 
 const CATEGORY_COLORS = {
+    'Thesis Advisory': 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border-blue-200 dark:border-blue-800',
     'Bimbingan Skripsi': 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border-blue-200 dark:border-blue-800',
     'Security Architecture': 'bg-purple-50 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300 border-purple-200 dark:border-purple-800',
     'Progress Review': 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    'Seminar & Defense': 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800',
     'Sidang / Seminar': 'bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border-amber-200 dark:border-amber-800',
     'Code Review': 'bg-cyan-50 text-cyan-700 dark:bg-cyan-950/50 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
 };
@@ -86,16 +88,16 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
     // Form state
     const [formData, setFormData] = useState({
         title: '',
-        category: 'Bimbingan Skripsi',
+        category: 'Thesis Advisory',
         meeting_date: new Date().toISOString().split('T')[0],
         start_time: '09:30',
         end_time: '11:00',
-        location: 'Lab Cyber Security & Forensik Gedung B Lt. 3',
+        location: 'Cyber Security & Forensics Lab Building B 3rd Fl',
         status: 'scheduled',
         attendees: ['Aditya Rahman', 'Fahristi Dewi Khadijah'],
-        points: ['Penyelarasan bab 4 metodologi pengujian penetrasi'],
-        action_items: [{ task: 'Perbarui diagram arsitektur otentikasi', assignee: 'Aditya Rahman', completed: false }],
-        reference_links: [{ title: 'Draf Dokumen Bab 4', url: 'https://docs.google.com' }],
+        points: ['Penetration testing methodology and authentication flow evaluation'],
+        action_items: [{ task: 'Update authentication architecture diagram', assignee: 'Aditya Rahman', completed: false }],
+        reference_links: [{ title: 'Chapter 4 Document Draft', url: 'https://docs.google.com' }],
         images: [],
         notes: '',
     });
@@ -130,16 +132,16 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
         setEditingMeeting(null);
         setFormData({
             title: '',
-            category: 'Bimbingan Skripsi',
+            category: 'Thesis Advisory',
             meeting_date: new Date().toISOString().split('T')[0],
             start_time: '09:30',
             end_time: '11:00',
-            location: 'Lab Cyber Security & Forensik Gedung B Lt. 3',
+            location: 'Cyber Security & Forensics Lab Building B 3rd Fl',
             status: 'scheduled',
             attendees: ['Aditya Rahman', 'Fahristi Dewi Khadijah'],
-            points: ['Evaluasi bab 4 metodologi pengujian penetrasi'],
-            action_items: [{ task: 'Perbarui diagram arsitektur otentikasi', assignee: 'Aditya Rahman', completed: false }],
-            reference_links: [{ title: 'Draf Dokumen Bab 4', url: 'https://docs.google.com' }],
+            points: ['Penetration testing methodology and authentication flow evaluation'],
+            action_items: [{ task: 'Update authentication architecture diagram', assignee: 'Aditya Rahman', completed: false }],
+            reference_links: [{ title: 'Chapter 4 Document Draft', url: 'https://docs.google.com' }],
             images: [],
             notes: '',
         });
@@ -150,7 +152,7 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
         setEditingMeeting(meeting);
         setFormData({
             title: meeting.title || '',
-            category: meeting.category || 'Bimbingan Skripsi',
+            category: meeting.category || 'Thesis Advisory',
             meeting_date: meeting.meeting_date ? meeting.meeting_date.split('T')[0] : '',
             start_time: meeting.start_time || '',
             end_time: meeting.end_time || '',
@@ -208,7 +210,7 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
     };
 
     const handleDelete = (meetingId) => {
-        if (confirm('Hapus catatan meeting ini? Tindakan tidak dapat dibatalkan.')) {
+        if (confirm('Delete this meeting record? This action cannot be undone.')) {
             router.delete(route('meetings.destroy', meetingId), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -275,7 +277,7 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
                 ...(prev.images || []),
                 {
                     url: newImageUrl.trim(),
-                    caption: newImageCaption.trim() || 'Lampiran Diagram / Foto',
+                    caption: newImageCaption.trim() || 'Whiteboard / Diagram Attachment',
                 },
             ],
         }));
@@ -292,7 +294,7 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
 
     // Copy formatted meeting minutes to clipboard
     const copyMeetingMinutes = (meeting) => {
-        const dateFormatted = new Date(meeting.meeting_date).toLocaleDateString('id-ID', {
+        const dateFormatted = new Date(meeting.meeting_date).toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -300,28 +302,28 @@ export default function MeetingsIndex({ meetings = [], counts = {}, filters = {}
         });
 
         const attendeesList = (meeting.attendees || []).join(', ') || 'Aditya Rahman, Fahristi Dewi Khadijah';
-        const pointsList = (meeting.points || []).map((p, idx) => `${idx + 1}. ${p}`).join('\n') || '- Tidak ada poin tercatat';
-        const actionItemsList = (meeting.action_items || []).map((item, idx) => `[${item.completed ? 'x' : ' '}] ${item.task} (PJ: ${item.assignee || 'Tim'})`).join('\n') || '-';
-        const referencesList = (meeting.reference_links || []).map((ref) => `• ${ref.title}: ${ref.url}`).join('\n') || '-';
+        const pointsList = (meeting.points || []).map((p, idx) => `${idx + 1}. ${p}`).join('\n') || 'None recorded';
+        const actionItemsList = (meeting.action_items || []).map((item) => `[${item.completed ? 'x' : ' '}] ${item.task} (Owner: ${item.assignee || 'Team'})`).join('\n') || 'None';
+        const referencesList = (meeting.reference_links || []).map((ref) => `• ${ref.title}: ${ref.url}`).join('\n') || 'None';
 
-        const text = `*NOTULENSI MEETING: ${meeting.title}*
-Kategori: ${meeting.category}
-Hari/Tanggal: ${dateFormatted}
-Waktu: ${meeting.start_time || '-'} s/d ${meeting.end_time || '-'}
-Lokasi: ${meeting.location}
-Peserta: ${attendeesList}
+        const text = `*MEETING MINUTES: ${meeting.title}*
+Category: ${meeting.category}
+Date: ${dateFormatted}
+Time: ${meeting.start_time || 'TBD'} to ${meeting.end_time || 'TBD'}
+Location: ${meeting.location}
+Attendees: ${attendeesList}
 
-*POIN PEMBAHASAN:*
+*DISCUSSION POINTS:*
 ${pointsList}
 
-*TINDAK LANJUT (ACTION ITEMS):*
+*ACTION ITEMS:*
 ${actionItemsList}
 
-*REFERENSI MATERI:*
+*REFERENCE MATERIALS:*
 ${referencesList}
 
-${meeting.notes ? `*NOTES PEMBAHASAN (YANG SUDAH DIBAHAS):*\n${meeting.notes}\n` : ''}
-_Dicatat via Marsha Security Workspace_`;
+${meeting.notes ? `*DISCUSSION NOTES (WHAT WAS DISCUSSED):*\n${meeting.notes}\n` : ''}
+_Recorded via Marsha Security Workspace_`;
 
         navigator.clipboard.writeText(text).then(() => {
             setCopiedId(meeting.id);
@@ -331,7 +333,7 @@ _Dicatat via Marsha Security Workspace_`;
 
     return (
         <AppLayout counts={counts} currentNav="meetings">
-            <Head title="Meetings & Agendas — Marsha Workspace" />
+            <Head title="Meetings & Notes — Marsha Workspace" />
 
             <div className="flex-1 p-3.5 sm:p-6 md:p-8 max-w-6xl mx-auto w-full space-y-4 sm:space-y-6">
                 {/* Header */}
@@ -346,7 +348,7 @@ _Dicatat via Marsha Security Workspace_`;
                             </h1>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Pencatatan sesi bimbingan skripsi, evaluasi arsitektur keamanan, notulensi poin diskusi, dan rencana tindak lanjut
+                            Thesis advisory logs, security architecture reviews, discussion minutes, and follow-up action items.
                         </p>
                     </div>
 
@@ -371,15 +373,15 @@ _Dicatat via Marsha Security Workspace_`;
                 {/* Metrics Bar */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div className="p-3.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Total Sesi Meeting</div>
+                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Total Sessions</div>
                         <div className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">{meetings.length}</div>
                     </div>
                     <div className="p-3.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Sesi Terjadwal</div>
+                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Scheduled Sessions</div>
                         <div className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">{scheduledCount}</div>
                     </div>
                     <div className="p-3.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
-                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Selesai / Terlaksana</div>
+                        <div className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Completed Sessions</div>
                         <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{completedCount}</div>
                     </div>
                     <div className="p-3.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs">
@@ -393,7 +395,7 @@ _Dicatat via Marsha Security Workspace_`;
                     <div className="relative w-full sm:w-72">
                         <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
                         <Input
-                            placeholder="Cari topik, lokasi, notulensi, notes..."
+                            placeholder="Search topic, location, minutes, notes..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="pl-8 h-8 text-xs bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
@@ -411,7 +413,7 @@ _Dicatat via Marsha Security Workspace_`;
                                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                                 }`}
                             >
-                                Semua
+                                All
                             </button>
                             <button
                                 onClick={() => setStatusFilter('scheduled')}
@@ -421,7 +423,7 @@ _Dicatat via Marsha Security Workspace_`;
                                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                                 }`}
                             >
-                                Terjadwal
+                                Scheduled
                             </button>
                             <button
                                 onClick={() => setStatusFilter('completed')}
@@ -431,7 +433,7 @@ _Dicatat via Marsha Security Workspace_`;
                                         : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                                 }`}
                             >
-                                Selesai
+                                Completed
                             </button>
                         </div>
 
@@ -439,10 +441,10 @@ _Dicatat via Marsha Security Workspace_`;
                         <select
                             value={categoryFilter}
                             onChange={(e) => setCategoryFilter(e.target.value)}
-                            aria-label="Filter kategori meeting"
+                            aria-label="Filter meeting category"
                             className="h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-2.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-hidden"
                         >
-                            <option value="all">Semua Kategori</option>
+                            <option value="all">All Categories</option>
                             {categories.map((c) => (
                                 <option key={c} value={c}>
                                     {c}
@@ -458,13 +460,13 @@ _Dicatat via Marsha Security Workspace_`;
                         <div className="mx-auto w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-3">
                             <CalendarDays className="h-6 w-6" />
                         </div>
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Belum ada agenda meeting</h3>
+                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">No meeting agendas found</h3>
                         <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                            Mulai catat jadwal bimbingan skripsi, evaluasi arsitektur keamanan, atau sinkronisasi teknis bersama tim.
+                            Start logging thesis advisory sessions, security architecture reviews, or team synchronization notes.
                         </p>
                         <Button onClick={openCreateModal} size="sm" className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white text-xs gap-1.5 h-8">
                             <Plus className="h-3.5 w-3.5" />
-                            Buat Catatan Meeting
+                            Create Meeting
                         </Button>
                     </Card>
                 ) : (
@@ -509,7 +511,7 @@ _Dicatat via Marsha Security Workspace_`;
                                             <div className="flex items-center gap-2">
                                                 <CalendarDays className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                                                 <span>
-                                                    {new Date(meeting.meeting_date).toLocaleDateString('id-ID', {
+                                                    {new Date(meeting.meeting_date).toLocaleDateString('en-US', {
                                                         weekday: 'short',
                                                         year: 'numeric',
                                                         month: 'short',
@@ -519,7 +521,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 {(meeting.start_time || meeting.end_time) && (
                                                     <span className="flex items-center gap-1 text-slate-500">
                                                         <Clock className="h-3 w-3" />
-                                                        {meeting.start_time || '-'} s/d {meeting.end_time || '-'}
+                                                        {meeting.start_time || 'TBD'} - {meeting.end_time || 'TBD'}
                                                     </span>
                                                 )}
                                             </div>
@@ -566,7 +568,7 @@ _Dicatat via Marsha Security Workspace_`;
                                             <div className="space-y-1">
                                                 <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                                                     <ListChecks className="h-3.5 w-3.5 text-slate-400" />
-                                                    Poin Pembahasan:
+                                                    Discussion Points:
                                                 </div>
                                                 <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1 pl-4 list-disc marker:text-slate-400">
                                                     {meeting.points.slice(0, 3).map((point, idx) => (
@@ -576,7 +578,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                     ))}
                                                     {meeting.points.length > 3 && (
                                                         <li className="text-[11px] text-slate-400 italic list-none -ml-4 pt-0.5">
-                                                            +{meeting.points.length - 3} poin pembahasan lainnya
+                                                            +{meeting.points.length - 3} more discussion points
                                                         </li>
                                                     )}
                                                 </ul>
@@ -588,7 +590,7 @@ _Dicatat via Marsha Security Workspace_`;
                                             <div className="space-y-1 p-2.5 rounded-lg bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200/70 dark:border-amber-900/40">
                                                 <div className="text-[11px] font-semibold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
                                                     <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
-                                                    <span>Notes Pembahasan (Yang Dibahas):</span>
+                                                    <span>Discussion Notes:</span>
                                                 </div>
                                                 <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-3 whitespace-pre-wrap leading-relaxed">
                                                     {meeting.notes}
@@ -620,7 +622,7 @@ _Dicatat via Marsha Security Workspace_`;
                                             <div className="space-y-1 pt-1">
                                                 <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                                                     <ImageIcon className="h-3 w-3" />
-                                                    Foto / Lampiran Whiteboard ({meeting.images.length})
+                                                    Attachments ({meeting.images.length})
                                                 </div>
                                                 <div className="flex items-center gap-2 overflow-x-auto pb-1">
                                                     {meeting.images.map((img, idx) => (
@@ -631,7 +633,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                         >
                                                             <img
                                                                 src={img.url}
-                                                                alt={img.caption || `Lampiran ${idx + 1}`}
+                                                                alt={img.caption || `Attachment ${idx + 1}`}
                                                                 className="h-full w-full object-cover"
                                                                 loading="lazy"
                                                             />
@@ -653,17 +655,17 @@ _Dicatat via Marsha Security Workspace_`;
                                                 variant="outline"
                                                 size="sm"
                                                 className="text-xs gap-1.5 h-7 px-2"
-                                                title="Salin notulensi lengkap ke clipboard"
+                                                title="Copy formatted meeting minutes to clipboard"
                                             >
                                                 {copiedId === meeting.id ? (
                                                     <>
                                                         <Check className="h-3 w-3 text-emerald-600" />
-                                                        <span className="text-emerald-600 font-semibold">Tersalin</span>
+                                                        <span className="text-emerald-600 font-semibold">Copied</span>
                                                     </>
                                                 ) : (
                                                     <>
                                                         <Copy className="h-3 w-3" />
-                                                        <span>Salin Notulensi</span>
+                                                        <span>Copy Minutes</span>
                                                     </>
                                                 )}
                                             </Button>
@@ -674,7 +676,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 size="sm"
                                                 className="text-xs h-7 px-2 text-slate-600 dark:text-slate-400"
                                             >
-                                                Detail
+                                                Details
                                             </Button>
                                         </div>
 
@@ -693,7 +695,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 variant="ghost"
                                                 size="sm"
                                                 className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
-                                                title="Hapus Meeting"
+                                                title="Delete Meeting"
                                             >
                                                 <Trash2 className="h-3.5 w-3.5" />
                                             </Button>
@@ -712,7 +714,7 @@ _Dicatat via Marsha Security Workspace_`;
                     <DialogHeader>
                         <DialogTitle className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                             <CalendarDays className="h-4 w-4" />
-                            {editingMeeting ? 'Perbarui Catatan Meeting' : 'Buat Catatan Meeting Baru'}
+                            {editingMeeting ? 'Edit Meeting Record' : 'Create New Meeting'}
                         </DialogTitle>
                     </DialogHeader>
 
@@ -720,13 +722,13 @@ _Dicatat via Marsha Security Workspace_`;
                         {/* Title / Topic */}
                         <div className="space-y-1">
                             <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                Topik / Judul Pertemuan *
+                                Meeting Topic / Title *
                             </label>
                             <Input
                                 required
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                placeholder="Contoh: Evaluasi Arsitektur Otentikasi dan Mitigasi Token JWT pada Vercel Serverless"
+                                placeholder="e.g. Chapter 4 Evaluation: Authentication Architecture & Load Testing Benchmarks"
                                 className="text-xs h-9 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                             />
                         </div>
@@ -735,36 +737,36 @@ _Dicatat via Marsha Security Workspace_`;
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="space-y-1">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Kategori Meeting
+                                    Category
                                 </label>
                                 <select
                                     value={formData.category}
                                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    aria-label="Kategori Meeting"
+                                    aria-label="Category"
                                     className="w-full h-9 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden"
                                 >
-                                    <option value="Bimbingan Skripsi">Bimbingan Skripsi</option>
+                                    <option value="Thesis Advisory">Thesis Advisory</option>
                                     <option value="Security Architecture">Security Architecture</option>
                                     <option value="Progress Review">Progress Review</option>
-                                    <option value="Sidang / Seminar">Sidang / Seminar</option>
+                                    <option value="Seminar & Defense">Seminar & Defense</option>
                                     <option value="Code Review">Code Review</option>
                                 </select>
                             </div>
 
                             <div className="space-y-1">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Status Sesi
+                                    Session Status
                                 </label>
                                 <select
                                     value={formData.status}
                                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                    aria-label="Status Sesi"
+                                    aria-label="Session Status"
                                     className="w-full h-9 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2.5 text-xs text-slate-800 dark:text-slate-200 focus:outline-hidden"
                                 >
-                                    <option value="scheduled">Terjadwal</option>
-                                    <option value="ongoing">Sedang Berlangsung</option>
-                                    <option value="completed">Selesai</option>
-                                    <option value="cancelled">Dibatalkan</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="ongoing">Ongoing</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
                                 </select>
                             </div>
                         </div>
@@ -773,7 +775,7 @@ _Dicatat via Marsha Security Workspace_`;
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div className="space-y-1">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Tanggal Pertemuan *
+                                    Meeting Date *
                                 </label>
                                 <Input
                                     type="date"
@@ -786,7 +788,7 @@ _Dicatat via Marsha Security Workspace_`;
 
                             <div className="space-y-1">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Waktu Mulai
+                                    Start Time
                                 </label>
                                 <Input
                                     type="time"
@@ -798,7 +800,7 @@ _Dicatat via Marsha Security Workspace_`;
 
                             <div className="space-y-1">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Waktu Selesai
+                                    End Time
                                 </label>
                                 <Input
                                     type="time"
@@ -812,21 +814,21 @@ _Dicatat via Marsha Security Workspace_`;
                         {/* Location */}
                         <div className="space-y-1">
                             <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                Lokasi / Link Meeting *
+                                Location or Meeting URL *
                             </label>
                             <Input
                                 required
                                 value={formData.location}
                                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                placeholder="Contoh: Lab Cyber Security Gedung B Lt. 3 atau https://meet.google.com/xyz-abcd-efg"
+                                placeholder="e.g. Cyber Security Lab Building B 3rd Fl or https://meet.google.com/xyz-abcd-efg"
                                 className="text-xs h-9 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                             />
                         </div>
 
-                        {/* Attendees / Peserta */}
+                        {/* Attendees */}
                         <div className="space-y-1.5">
                             <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                Peserta Pertemuan
+                                Attendees
                             </label>
                             <div className="flex items-center gap-1.5 flex-wrap">
                                 {formData.attendees.map((att, idx) => (
@@ -866,7 +868,7 @@ _Dicatat via Marsha Security Workspace_`;
                                             }
                                         }
                                     }}
-                                    placeholder="Ketik nama peserta lalu tekan Tambah (contoh: Dosen Pembimbing Utama)"
+                                    placeholder="Type attendee name and click Add (e.g. Primary Thesis Advisor)"
                                     className="text-xs h-8 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                                 />
                                 <Button
@@ -884,7 +886,7 @@ _Dicatat via Marsha Security Workspace_`;
                                     }}
                                     className="text-xs h-8 px-2.5"
                                 >
-                                    Tambah
+                                    Add
                                 </Button>
                             </div>
                         </div>
@@ -893,7 +895,7 @@ _Dicatat via Marsha Security Workspace_`;
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Poin Pembahasan / Notulensi
+                                    Discussion Points / Minutes
                                 </label>
                                 <button
                                     type="button"
@@ -905,7 +907,7 @@ _Dicatat via Marsha Security Workspace_`;
                                     }
                                     className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                                 >
-                                    <Plus className="h-3 w-3" /> Tambah Poin
+                                    <Plus className="h-3 w-3" /> Add Point
                                 </button>
                             </div>
 
@@ -920,7 +922,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 updated[idx] = e.target.value;
                                                 setFormData({ ...formData, points: updated });
                                             }}
-                                            placeholder={`Poin pembahasan ke ${idx + 1} (contoh: Evaluasi kueri autentikasi dan penanganan latensi database)`}
+                                            placeholder={`Discussion point #${idx + 1} (e.g. Evaluation of authentication query latency and database pooling)`}
                                             className="text-xs h-8 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                                         />
                                         {formData.points.length > 1 && (
@@ -940,11 +942,11 @@ _Dicatat via Marsha Security Workspace_`;
                             </div>
                         </div>
 
-                        {/* Action Items / Tindak Lanjut */}
+                        {/* Action Items / Follow-up */}
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Tindak Lanjut (Action Items)
+                                    Follow-up Action Items
                                 </label>
                                 <button
                                     type="button"
@@ -959,7 +961,7 @@ _Dicatat via Marsha Security Workspace_`;
                                     }
                                     className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                                 >
-                                    <Plus className="h-3 w-3" /> Tambah Action Item
+                                    <Plus className="h-3 w-3" /> Add Action Item
                                 </button>
                             </div>
 
@@ -974,7 +976,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 updated[idx].completed = e.target.checked;
                                                 setFormData({ ...formData, action_items: updated });
                                             }}
-                                            aria-label={`Status tindak lanjut ${idx + 1}`}
+                                            aria-label={`Follow-up status ${idx + 1}`}
                                             className="h-4 w-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-0"
                                         />
                                         <Input
@@ -984,7 +986,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 updated[idx].task = e.target.value;
                                                 setFormData({ ...formData, action_items: updated });
                                             }}
-                                            placeholder="Tugas tindak lanjut (contoh: Revisi bab 4 subbab 4.2 pengujian beban)"
+                                            placeholder="Action item task (e.g. Update authentication sequence diagram in Chapter 4)"
                                             className="text-xs h-8 flex-1 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                                         />
                                         <select
@@ -994,12 +996,12 @@ _Dicatat via Marsha Security Workspace_`;
                                                 updated[idx].assignee = e.target.value;
                                                 setFormData({ ...formData, action_items: updated });
                                             }}
-                                            aria-label={`Penanggung jawab tindak lanjut ${idx + 1}`}
+                                            aria-label={`Follow-up assignee ${idx + 1}`}
                                             className="h-8 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-2 text-xs text-slate-800 dark:text-slate-200"
                                         >
                                             <option value="Aditya Rahman">Adit</option>
                                             <option value="Fahristi Dewi Khadijah">Risty</option>
-                                            <option value="Tim">Bersama</option>
+                                            <option value="Team">Team</option>
                                         </select>
                                         <button
                                             type="button"
@@ -1020,7 +1022,7 @@ _Dicatat via Marsha Security Workspace_`;
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between">
                                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                                    Tautan Referensi Dokumen / Riset
+                                    Reference Documents & Research Links
                                 </label>
                                 <button
                                     type="button"
@@ -1035,7 +1037,7 @@ _Dicatat via Marsha Security Workspace_`;
                                     }
                                     className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
                                 >
-                                    <Plus className="h-3 w-3" /> Tambah Referensi
+                                    <Plus className="h-3 w-3" /> Add Reference
                                 </button>
                             </div>
 
@@ -1049,7 +1051,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 updated[idx].title = e.target.value;
                                                 setFormData({ ...formData, reference_links: updated });
                                             }}
-                                            placeholder="Judul tautan (contoh: Draf Bab 4 Google Docs)"
+                                            placeholder="Link title (e.g. Chapter 4 Draft Google Docs)"
                                             className="text-xs h-8 sm:col-span-2 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                                         />
                                         <Input
@@ -1059,7 +1061,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 updated[idx].url = e.target.value;
                                                 setFormData({ ...formData, reference_links: updated });
                                             }}
-                                            placeholder="URL tautan (https://docs.google.com/...)"
+                                            placeholder="URL (https://docs.google.com/...)"
                                             className="text-xs h-8 sm:col-span-2 bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800"
                                         />
                                         <button
@@ -1080,7 +1082,7 @@ _Dicatat via Marsha Security Workspace_`;
                         {/* Image Attachments */}
                         <div className="space-y-2">
                             <label className="font-semibold text-slate-700 dark:text-slate-300 block">
-                                Lampiran Gambar / Foto Whiteboard / Diagram
+                                Diagrams & Whiteboard Attachments
                             </label>
 
                             {/* Existing Images */}
@@ -1093,11 +1095,11 @@ _Dicatat via Marsha Security Workspace_`;
                                         >
                                             <img
                                                 src={img.url}
-                                                alt={img.caption || `Lampiran ${idx + 1}`}
+                                                alt={img.caption || `Attachment ${idx + 1}`}
                                                 className="h-24 w-full object-cover rounded-md"
                                             />
                                             <div className="text-[10px] font-medium text-slate-600 dark:text-slate-400 truncate mt-1 px-1">
-                                                {img.caption || 'Tanpa keterangan'}
+                                                {img.caption || 'Untitled attachment'}
                                             </div>
                                             <button
                                                 type="button"
@@ -1116,7 +1118,7 @@ _Dicatat via Marsha Security Workspace_`;
                                 <div className="flex items-center gap-2">
                                     <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-2xs">
                                         <Upload className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-                                        <span>Unggah Berkas Gambar / Foto</span>
+                                        <span>Upload Image File</span>
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -1124,20 +1126,20 @@ _Dicatat via Marsha Security Workspace_`;
                                             className="hidden"
                                         />
                                     </label>
-                                    <span className="text-[10px] text-slate-400">JPG, PNG, WebP terkompresi otomatis</span>
+                                    <span className="text-[10px] text-slate-400">JPG, PNG, WebP auto-compressed</span>
                                 </div>
 
                                 <div className="flex items-center gap-2 pt-1 border-t border-slate-200 dark:border-slate-800">
                                     <Input
                                         value={newImageUrl}
                                         onChange={(e) => setNewImageUrl(e.target.value)}
-                                        placeholder="Atau tempel URL gambar eksternal (https://...)"
+                                        placeholder="Or paste external image URL (https://...)"
                                         className="text-xs h-8 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
                                     />
                                     <Input
                                         value={newImageCaption}
                                         onChange={(e) => setNewImageCaption(e.target.value)}
-                                        placeholder="Keterangan foto"
+                                        placeholder="Image caption"
                                         className="text-xs h-8 w-36 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hidden sm:block"
                                     />
                                     <Button
@@ -1147,7 +1149,7 @@ _Dicatat via Marsha Security Workspace_`;
                                         onClick={addImageUrl}
                                         className="text-xs h-8 px-2.5"
                                     >
-                                        Tambah URL
+                                        Add URL
                                     </Button>
                                 </div>
                             </div>
@@ -1158,15 +1160,15 @@ _Dicatat via Marsha Security Workspace_`;
                             <label className="font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-between">
                                 <span className="flex items-center gap-1.5">
                                     <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                                    Notes Pembahasan (Apa saja yang sudah dibahas di meeting)
+                                    Discussion Notes (What was discussed in the meeting)
                                 </span>
-                                <span className="text-[10px] text-slate-400 font-normal">Mendukung multi paragraf</span>
+                                <span className="text-[10px] text-slate-400 font-normal">Supports multi-paragraph</span>
                             </label>
                             <Textarea
                                 rows={4}
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                placeholder="Tuliskan poin hasil obrolan: apa saja yang telah dibahas bersama dosen atau rekan, argumen teknis arsitektur keamanan, kendala implementasi, dan kesepakatan solusi..."
+                                placeholder="Summarize key discussion takeaways: agreements with advisor or team, security architectural decisions, technical blockers, and planned solutions..."
                                 className="text-xs bg-white dark:bg-slate-950 border-slate-200 dark:border-slate-800 resize-y min-h-[90px]"
                             />
                         </div>
@@ -1178,14 +1180,14 @@ _Dicatat via Marsha Security Workspace_`;
                                 onClick={() => setIsCreateModalOpen(false)}
                                 className="text-xs h-8"
                             >
-                                Batal
+                                Cancel
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}
                                 className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white text-xs h-8 px-4"
                             >
-                                {isSubmitting ? 'Menyimpan...' : (editingMeeting ? 'Perbarui Catatan' : 'Simpan Meeting')}
+                                {isSubmitting ? 'Saving...' : (editingMeeting ? 'Update Meeting' : 'Save Meeting')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -1216,7 +1218,7 @@ _Dicatat via Marsha Security Workspace_`;
                             <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
                                 <CalendarDays className="h-4 w-4 text-slate-400" />
                                 <span>
-                                    {new Date(selectedMeeting.meeting_date).toLocaleDateString('id-ID', {
+                                    {new Date(selectedMeeting.meeting_date).toLocaleDateString('en-US', {
                                         weekday: 'long',
                                         year: 'numeric',
                                         month: 'long',
@@ -1226,7 +1228,7 @@ _Dicatat via Marsha Security Workspace_`;
                                 {(selectedMeeting.start_time || selectedMeeting.end_time) && (
                                     <span className="flex items-center gap-1 text-slate-500">
                                         <Clock className="h-3 w-3" />
-                                        {selectedMeeting.start_time || '-'} s/d {selectedMeeting.end_time || '-'}
+                                        {selectedMeeting.start_time || 'TBD'} to {selectedMeeting.end_time || 'TBD'}
                                     </span>
                                 )}
                             </div>
@@ -1241,7 +1243,7 @@ _Dicatat via Marsha Security Workspace_`;
                         {selectedMeeting.attendees && selectedMeeting.attendees.length > 0 && (
                             <div className="space-y-1">
                                 <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Peserta Yang Hadir
+                                    Attendees
                                 </div>
                                 <div className="flex items-center gap-1.5 flex-wrap">
                                     {selectedMeeting.attendees.map((att, idx) => (
@@ -1260,7 +1262,7 @@ _Dicatat via Marsha Security Workspace_`;
                         {selectedMeeting.points && selectedMeeting.points.length > 0 && (
                             <div className="space-y-2">
                                 <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Poin Pembahasan Notulensi
+                                    Discussion Points
                                 </div>
                                 <div className="space-y-1.5 bg-slate-50 dark:bg-slate-950/60 p-3 rounded-lg border border-slate-200/80 dark:border-slate-800/80">
                                     {selectedMeeting.points.map((point, idx) => (
@@ -1277,7 +1279,7 @@ _Dicatat via Marsha Security Workspace_`;
                         {selectedMeeting.action_items && selectedMeeting.action_items.length > 0 && (
                             <div className="space-y-2">
                                 <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Tindak Lanjut Pasca Meeting
+                                    Follow-up Action Items
                                 </div>
                                 <div className="space-y-1.5">
                                     {selectedMeeting.action_items.map((item, idx) => (
@@ -1296,7 +1298,7 @@ _Dicatat via Marsha Security Workspace_`;
                                                 </span>
                                             </div>
                                             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">
-                                                {item.assignee || 'Tim'}
+                                                {item.assignee || 'Team'}
                                             </span>
                                         </div>
                                     ))}
@@ -1308,7 +1310,7 @@ _Dicatat via Marsha Security Workspace_`;
                         {selectedMeeting.reference_links && selectedMeeting.reference_links.length > 0 && (
                             <div className="space-y-2">
                                 <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Dokumen & Tautan Referensi
+                                    Reference Documents & Links
                                 </div>
                                 <div className="space-y-1.5">
                                     {selectedMeeting.reference_links.map((ref, idx) => (
@@ -1334,7 +1336,7 @@ _Dicatat via Marsha Security Workspace_`;
                         {selectedMeeting.images && selectedMeeting.images.length > 0 && (
                             <div className="space-y-2">
                                 <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                                    Foto Whiteboard / Lampiran Visual ({selectedMeeting.images.length})
+                                    Whiteboard & Visual Attachments ({selectedMeeting.images.length})
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                                     {selectedMeeting.images.map((img, idx) => (
@@ -1345,7 +1347,7 @@ _Dicatat via Marsha Security Workspace_`;
                                         >
                                             <img
                                                 src={img.url}
-                                                alt={img.caption || `Lampiran ${idx + 1}`}
+                                                alt={img.caption || `Attachment ${idx + 1}`}
                                                 className="h-28 w-full object-cover rounded-md group-hover:scale-105 transition-transform duration-200"
                                             />
                                             {img.caption && (
@@ -1364,7 +1366,7 @@ _Dicatat via Marsha Security Workspace_`;
                             <div className="space-y-1.5">
                                 <div className="text-xs font-semibold text-amber-800 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
                                     <FileText className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
-                                    Notes Pembahasan (Yang Sudah Dibahas)
+                                    Discussion Notes (What Was Discussed)
                                 </div>
                                 <div className="p-3.5 rounded-lg bg-amber-50/60 dark:bg-amber-950/20 text-xs text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed border border-amber-200/70 dark:border-amber-900/40">
                                     {selectedMeeting.notes}
@@ -1382,12 +1384,12 @@ _Dicatat via Marsha Security Workspace_`;
                                 {copiedId === selectedMeeting.id ? (
                                     <>
                                         <Check className="h-3.5 w-3.5 text-emerald-600" />
-                                        <span className="text-emerald-600 font-semibold">Notulensi Tersalin</span>
+                                        <span className="text-emerald-600 font-semibold">Minutes Copied</span>
                                     </>
                                 ) : (
                                     <>
                                         <Copy className="h-3.5 w-3.5" />
-                                        <span>Salin Notulensi</span>
+                                        <span>Copy Minutes</span>
                                     </>
                                 )}
                             </Button>
@@ -1410,7 +1412,7 @@ _Dicatat via Marsha Security Workspace_`;
                                     size="sm"
                                     className="bg-slate-900 dark:bg-slate-100 dark:text-slate-900 text-white text-xs h-8"
                                 >
-                                    Tutup
+                                    Close
                                 </Button>
                             </div>
                         </DialogFooter>
@@ -1424,7 +1426,7 @@ _Dicatat via Marsha Security Workspace_`;
                     <DialogContent className="max-w-3xl p-3 bg-black/95 border-slate-800 text-white">
                         <div className="flex items-center justify-between pb-2 border-b border-slate-800">
                             <span className="text-xs font-semibold truncate text-slate-300">
-                                {activeImageViewer.caption || 'Pratinjau Gambar'}
+                                {activeImageViewer.caption || 'Image Preview'}
                             </span>
                             <button
                                 onClick={() => setActiveImageViewer(null)}
@@ -1436,7 +1438,7 @@ _Dicatat via Marsha Security Workspace_`;
                         <div className="flex items-center justify-center p-2 max-h-[75vh]">
                             <img
                                 src={activeImageViewer.url}
-                                alt={activeImageViewer.caption || 'Pratinjau'}
+                                alt={activeImageViewer.caption || 'Preview'}
                                 className="max-h-[70vh] max-w-full object-contain rounded-md"
                             />
                         </div>

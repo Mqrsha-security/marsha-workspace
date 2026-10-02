@@ -32,35 +32,35 @@ class MeetingTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('meetings.store'), [
-            'title' => 'Bimbingan Bab 4: Arsitektur Keamanan',
-            'category' => 'Bimbingan Skripsi',
+            'title' => 'Thesis Advisory Chapter 4: Security Architecture',
+            'category' => 'Thesis Advisory',
             'meeting_date' => '2026-10-05',
             'start_time' => '09:00',
             'end_time' => '11:00',
-            'location' => 'Lab Cyber Security Gedung B Lt. 3',
+            'location' => 'Cyber Security Lab Building B 3rd Fl',
             'status' => 'scheduled',
             'attendees' => ['Aditya Rahman', 'Fahristi Dewi Khadijah'],
             'points' => [
-                'Penyelarasan parameter pengujian penetrasi',
-                'Evaluasi arsitektur token JWT',
+                'Alignment of penetration testing parameters',
+                'Evaluation of JWT authentication architecture',
             ],
             'action_items' => [
-                ['task' => 'Revisi bab 4 subbab 4.2', 'assignee' => 'Aditya Rahman', 'completed' => false],
+                ['task' => 'Revise Chapter 4 Section 4.2', 'assignee' => 'Aditya Rahman', 'completed' => false],
             ],
             'reference_links' => [
-                ['title' => 'Draf Bab 4', 'url' => 'https://docs.google.com/bab4'],
+                ['title' => 'Chapter 4 Draft', 'url' => 'https://docs.google.com/bab4'],
             ],
             'images' => [
-                ['url' => 'data:image/png;base64,sample', 'caption' => 'Bagan Arsitektur'],
+                ['url' => 'data:image/png;base64,sample', 'caption' => 'Architecture Diagram'],
             ],
-            'notes' => 'Catatan penting hasil evaluasi.',
+            'notes' => 'Key evaluation and discussion notes.',
         ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('meetings', [
-            'title' => 'Bimbingan Bab 4: Arsitektur Keamanan',
-            'location' => 'Lab Cyber Security Gedung B Lt. 3',
-            'notes' => 'Catatan penting hasil evaluasi.',
+            'title' => 'Thesis Advisory Chapter 4: Security Architecture',
+            'location' => 'Cyber Security Lab Building B 3rd Fl',
+            'notes' => 'Key evaluation and discussion notes.',
         ]);
     }
 
@@ -87,8 +87,8 @@ class MeetingTest extends TestCase
             'end_time' => '11:00',
             'location' => 'Google Meet',
             'status' => 'completed',
-            'points' => ['Pembahasan selesai'],
-            'notes' => 'Catatan pembahasan yang diperbarui.',
+            'points' => ['Discussion concluded'],
+            'notes' => 'Updated discussion notes.',
         ]);
 
         $response->assertRedirect();
@@ -96,7 +96,7 @@ class MeetingTest extends TestCase
             'id' => $meeting->id,
             'title' => 'Updated Meeting Title',
             'status' => 'completed',
-            'notes' => 'Catatan pembahasan yang diperbarui.',
+            'notes' => 'Updated discussion notes.',
         ]);
     }
 

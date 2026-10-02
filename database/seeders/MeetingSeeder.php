@@ -14,37 +14,37 @@ class MeetingSeeder extends Seeder
         $risti = User::where('email', 'marshaSec@risti.ta')->first();
 
         Meeting::create([
-            'title' => 'Bimbingan Bab 4: Evaluasi Keamanan Otentikasi & Pengujian Beban',
-            'category' => 'Bimbingan Skripsi',
+            'title' => 'Thesis Advisory: Security Authentication Evaluation & Load Testing',
+            'category' => 'Thesis Advisory',
             'meeting_date' => now()->addDays(1)->format('Y-m-d'),
             'start_time' => '09:30',
             'end_time' => '11:30',
-            'location' => 'Lab Cyber Security & Forensik Gedung B Lt. 3',
+            'location' => 'Cyber Security & Digital Forensics Lab Building B 3rd Floor',
             'status' => 'scheduled',
-            'attendees' => ['Aditya Rahman', 'Fahristi Dewi Khadijah', 'Dosen Pembimbing Utama'],
+            'attendees' => ['Aditya Rahman', 'Fahristi Dewi Khadijah', 'Primary Thesis Advisor'],
             'points' => [
-                'Penyelarasan parameter pengujian penetrasi dan mitigasi token JWT',
-                'Validasi skema role-based access control (RBAC) pada antarmuka pengguna',
-                'Review format penulisan tabel evaluasi arsitektur sesuai pedoman sidang',
-                'Konfirmasi jadwal gladi seminar hasil dan berkas administrasi bimbingan',
+                'Alignment of penetration testing parameters and JWT token mitigation',
+                'Validation of role-based access control (RBAC) across UI components',
+                'Review of architecture evaluation benchmarking tables per thesis defense guidelines',
+                'Confirmation of results seminar rehearsal schedule and supervisory paperwork',
             ],
             'action_items' => [
-                ['task' => 'Perbarui diagram alur mitigasi token pada bab 4', 'assignee' => 'Aditya Rahman', 'completed' => false],
-                ['task' => 'Lengkapi data rekapitulasi pengujian latensi basis data', 'assignee' => 'Fahristi Dewi Khadijah', 'completed' => false],
+                ['task' => 'Update token mitigation sequence diagram in Chapter 4', 'assignee' => 'Aditya Rahman', 'completed' => false],
+                ['task' => 'Compile benchmark dataset for PostgreSQL query latency', 'assignee' => 'Fahristi Dewi Khadijah', 'completed' => false],
             ],
             'reference_links' => [
-                ['title' => 'Draf Dokumen Bab 4 (Google Docs)', 'url' => 'https://docs.google.com'],
-                ['title' => 'Dataset Log Pengujian (Google Drive)', 'url' => 'https://drive.google.com'],
+                ['title' => 'Chapter 4 Document Draft (Google Docs)', 'url' => 'https://docs.google.com'],
+                ['title' => 'Evaluation Test Log Dataset (Google Drive)', 'url' => 'https://drive.google.com'],
             ],
             'images' => [
-                ['url' => '/images/marsha-security.png', 'caption' => 'Bagan Arsitektur Otentikasi'],
+                ['url' => '/images/marsha-security.png', 'caption' => 'Authentication Architecture Diagram'],
             ],
-            'notes' => 'Fokus utama pada validasi hasil benchmark respon kueri PostgreSQL dan mitigasi brute-force sesi pengguna.',
+            'notes' => 'Key focus centered on PostgreSQL query latency benchmarks and brute-force mitigation on active user session lifecycles.',
             'created_by' => $adit?->id ?? 1,
         ]);
 
         Meeting::create([
-            'title' => 'Review Arsitektur Keamanan & Audit Log RBAC',
+            'title' => 'Security Architecture Review & RBAC Audit Logging',
             'category' => 'Security Architecture',
             'meeting_date' => now()->subDays(2)->format('Y-m-d'),
             'start_time' => '13:00',
@@ -53,20 +53,20 @@ class MeetingSeeder extends Seeder
             'status' => 'completed',
             'attendees' => ['Aditya Rahman', 'Fahristi Dewi Khadijah'],
             'points' => [
-                'Analisis perimeter keamanan endpoint Vercel serverless',
-                'Verifikasi isolasi privilege antara akun Security Architect dan Project Manager',
-                'Penerapan real-time heartbeat dan proteksi CSRF pada rute presence',
+                'Security perimeter assessment for Vercel serverless edge endpoints',
+                'Privilege boundary verification between Security Architect and Project Manager accounts',
+                'Real-time presence heartbeat implementation with CSRF bypass protection on unload beacons',
             ],
             'action_items' => [
-                ['task' => 'Optimasi ambang batas offline presence menjadi 25 detik', 'assignee' => 'Aditya Rahman', 'completed' => true],
-                ['task' => 'Sinkronisasi direktori tautan eksternal pada tab Applications', 'assignee' => 'Fahristi Dewi Khadijah', 'completed' => true],
+                ['task' => 'Fine-tune presence inactive threshold to 25 seconds', 'assignee' => 'Aditya Rahman', 'completed' => true],
+                ['task' => 'Synchronize external directory links in the Applications repository', 'assignee' => 'Fahristi Dewi Khadijah', 'completed' => true],
             ],
             'reference_links' => [
-                ['title' => 'Repositori GitHub Marsha Workspace', 'url' => 'https://github.com/Mqrsha-security/marsha-workspace'],
+                ['title' => 'Marsha Workspace GitHub Repository', 'url' => 'https://github.com/Mqrsha-security/marsha-workspace'],
                 ['title' => 'IEEE Xplore Literature Database', 'url' => 'https://ieeexplore.ieee.org'],
             ],
             'images' => [],
-            'notes' => 'Seluruh evaluasi arsitektur dinyatakan siap untuk tahapan pengujian akhir tugas akhir.',
+            'notes' => 'All security architecture specifications verified ready for final thesis defense testing.',
             'created_by' => $risti?->id ?? 2,
         ]);
     }

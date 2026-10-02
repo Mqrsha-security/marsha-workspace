@@ -283,6 +283,15 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                                 </span>
                             )}
                         </Link>
+                    </div>
+
+                    <Separator className="dark:bg-slate-800" />
+
+                    {/* Collaboration */}
+                    <div className="space-y-0.5">
+                        <div className="px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                            Collaboration
+                        </div>
 
                         <Link
                             href={route('meetings.index')}
@@ -295,7 +304,7 @@ export default function AppLayout({ children, currentScope = 'all', counts = {},
                         >
                             <span className="flex items-center gap-2">
                                 <CalendarDays className="h-3.5 w-3.5" />
-                                Meetings
+                                Meetings & Notes
                             </span>
                             {counts.meetings_count !== undefined && (
                                 <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
