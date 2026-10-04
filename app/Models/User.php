@@ -21,10 +21,11 @@ class User extends Authenticatable
 
     public function getPhotoUrlAttribute(): ?string
     {
-        if (str_contains($this->email, 'adit')) {
+        $email = (string) ($this->email ?? '');
+        if (str_contains($email, 'adit')) {
             return '/images/team/aditya.jpg';
         }
-        if (str_contains($this->email, 'risti')) {
+        if (str_contains($email, 'risti')) {
             return '/images/team/fahristi.jpg';
         }
         return null;

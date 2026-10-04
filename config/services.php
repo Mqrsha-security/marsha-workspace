@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'google' => [
+        'service_account_json' => env('GOOGLE_SERVICE_ACCOUNT_JSON'),
+        'service_account_email' => env('GOOGLE_SERVICE_ACCOUNT_EMAIL'),
+        'private_key' => env('GOOGLE_PRIVATE_KEY'),
+        'drive_folder_id' => env('GOOGLE_DRIVE_FOLDER_ID'),
+        'share_email' => env('GOOGLE_SHARE_EMAIL', 'adit.rwet@gmail.com'),
+    ],
+
 ];

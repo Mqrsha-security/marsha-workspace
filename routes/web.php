@@ -45,6 +45,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/presence/ping', [\App\Http\Controllers\PresenceController::class, 'ping'])->name('presence.ping');
     Route::get('/presence/users', [\App\Http\Controllers\PresenceController::class, 'users'])->name('presence.users');
 
+    Route::get('/backup/status', [\App\Http\Controllers\BackupController::class, 'status'])->name('backup.status');
+    Route::post('/backup/google-drive', [\App\Http\Controllers\BackupController::class, 'execute'])->name('backup.googleDrive');
+    Route::get('/backup/download', [\App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
