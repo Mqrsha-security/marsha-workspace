@@ -217,7 +217,87 @@ export default function GoogleDriveBackupModal({ isOpen, onClose }) {
                         {/* Configuration Form / Status */}
                         {!backupResult && (
                             <>
-                                {statusData?.configured ? (
+                                {statusData?.oauth_connected ? (
+                                    <div className="space-y-3.5">
+                                        <div className="flex items-center justify-between p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-900 bg-emerald-50/60 dark:bg-emerald-950/30 text-xs">
+                                            <span className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-medium">
+                                                <HardDrive className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                                                Terhubung ke Google Drive: <strong>{statusData.connected_email || 'Akun Google Anda'}</strong>
+                                            </span>
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    await fetch('/backup/google/disconnect', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' } });
+                                                    fetchStatus();
+                                                }}
+                                                className="text-[11px] text-rose-600 hover:underline font-medium"
+                                            >
+                                                Disconnect
+                                            </button>
+                                        </div>
+
+                                        <div className="pt-2 flex flex-col sm:flex-row gap-2">
+                                            <button
+                                                type="button"
+                                                disabled={isExecuting}
+                                                onClick={handleExecuteBackup}
+                                                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-sky-600 hover:bg-sky-700 disabled:bg-sky-400 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+                                            >
+                                                {isExecuting ? (
+                                                    <>
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                        Generating Google Docs & Uploading...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Cloud className="h-4 w-4" />
+                                                        Start Backup to Google Drive
+                                                    </>
+                                                )}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleDownloadZip}
+                                                className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium transition-colors"
+                                                title="Download offline backup zip archive"
+                                            >
+                                                <Download className="h-3.5 w-3.5 text-slate-500" />
+                                                Download ZIP
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : statusData?.oauth_available ? (
+                                    <div className="space-y-3.5">
+                                        <div className="p-3.5 rounded-xl border border-sky-200 dark:border-sky-900 bg-sky-50/70 dark:bg-sky-950/30 text-xs space-y-2">
+                                            <div className="flex items-center gap-2 text-sky-800 dark:text-sky-300 font-semibold">
+                                                <Cloud className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                                                Hubungkan Akun Google Drive (Kuota 15 GB Pribadi)
+                                            </div>
+                                            <p className="text-[11px] text-sky-900/80 dark:text-sky-300/80 leading-relaxed">
+                                                Google membatasi kuota Service Account robot 0 GB. Hubungkan akun Google pribadi Anda sekali ini agar file Google Docs otomatis tersimpan di folder Drive Anda menggunakan kuota 15 GB pribadi tanpa error batas kuota.
+                                            </p>
+                                            <a
+                                                href="/backup/google/connect"
+                                                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-xs transition-colors mt-1"
+                                            >
+                                                <HardDrive className="h-4 w-4" />
+                                                Login & Beri Akses Google Drive
+                                            </a>
+                                        </div>
+
+                                        <div className="flex justify-center">
+                                            <button
+                                                type="button"
+                                                onClick={handleDownloadZip}
+                                                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium transition-colors"
+                                            >
+                                                <Download className="h-3.5 w-3.5 text-slate-500" />
+                                                Download Arsip ZIP (Docs HTML + JSON)
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : statusData?.configured ? (
                                     <div className="space-y-3.5">
                                         <div className="flex items-center justify-between p-2.5 rounded-lg border border-sky-100 dark:border-sky-950 bg-sky-50/50 dark:bg-sky-950/20 text-xs">
                                             <span className="flex items-center gap-2 text-sky-800 dark:text-sky-300 font-medium">

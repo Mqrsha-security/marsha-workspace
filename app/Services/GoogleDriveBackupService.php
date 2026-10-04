@@ -189,9 +189,9 @@ class GoogleDriveBackupService
     /**
      * Execute full workspace backup to Google Drive.
      */
-    public function executeBackup(?string $shareEmail = null): array
+    public function executeBackup(?string $shareEmail = null, ?string $userAccessToken = null): array
     {
-        $accessToken = $this->getAccessToken();
+        $accessToken = $userAccessToken ?: $this->getAccessToken();
         $parentFolderId = config('services.google.drive_folder_id');
 
         $timestamp = Carbon::now('Asia/Jakarta')->format('Y-m-d H:i');

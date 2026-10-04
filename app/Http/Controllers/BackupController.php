@@ -24,6 +24,9 @@ class BackupController extends Controller
     {
         return response()->json([
             'configured' => $service->isConfigured(),
+            'oauth_available' => !empty(config('services.google.client_id')),
+            'oauth_connected' => session()->has('google_user_token'),
+            'connected_email' => session('google_user_email'),
             'counts' => [
                 'tasks' => Task::count(),
                 'meetings' => Meeting::count(),
@@ -36,21 +39,99 @@ class BackupController extends Controller
     }
 
     /**
+     * Redirect to Google OAuth consent screen.
+     */
+    public function connectGoogle(): \Illuminate\Http\RedirectResponse
+    {
+        $clientId = config('services.google.client_id');
+        $redirectUri = config('services.google.redirect_uri');
+
+        if (empty($clientId)) {
+            return redirect()->back()->with('error', 'Google Client ID is not configured.');
+        }
+
+        $params = http_build_query([
+            'client_id' => $clientId,
+            'redirect_uri' => $redirectUri,
+            'response_type' => 'code',
+            'scope' => 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/documents https://www.googleapis.com/auth/userinfo.email',
+            'access_type' => 'offline',
+            'prompt' => 'consent',
+        ]);
+
+        return redirect()->away("https://accounts.google.com/o/oauth2/v2/auth?{$params}");
+    }
+
+    /**
+     * Handle Google OAuth callback.
+     */
+    public function googleCallback(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $code = $request->query('code');
+        if (!$code) {
+            return redirect()->route('tasks.index')->with('error', 'Google authorization was cancelled.');
+        }
+
+        $response = \Illuminate\Support\Facades\Http::asForm()->post('https://oauth2.googleapis.com/token', [
+            'client_id' => config('services.google.client_id'),
+            'client_secret' => config('services.google.client_secret'),
+            'redirect_uri' => config('services.google.redirect_uri'),
+            'grant_type' => 'authorization_code',
+            'code' => $code,
+        ]);
+
+        if ($response->successful()) {
+            $tokenData = $response->json();
+            session(['google_user_token' => $tokenData['access_token']]);
+            if (!empty($tokenData['refresh_token'])) {
+                session(['google_refresh_token' => $tokenData['refresh_token']]);
+            }
+
+            // Fetch user info email
+            try {
+                $userRes = \Illuminate\Support\Facades\Http::withToken($tokenData['access_token'])
+                    ->get('https://www.googleapis.com/oauth2/v2/userinfo');
+                if ($userRes->successful()) {
+                    session(['google_user_email' => $userRes->json()['email'] ?? null]);
+                }
+            } catch (\Throwable $e) {
+                // Ignore userinfo failure
+            }
+
+            return redirect()->route('tasks.index')->with('success', 'Google Drive connected successfully.');
+        }
+
+        return redirect()->route('tasks.index')->with('error', 'Failed to authenticate with Google: ' . $response->body());
+    }
+
+    /**
+     * Disconnect Google OAuth token.
+     */
+    public function disconnectGoogle(): JsonResponse
+    {
+        session()->forget(['google_user_token', 'google_refresh_token', 'google_user_email']);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
      * Trigger automated backup to Google Drive & Google Docs.
      */
     public function execute(Request $request, GoogleDriveBackupService $service): JsonResponse
     {
-        if (!$service->isConfigured()) {
+        $userToken = session('google_user_token');
+
+        if (!$userToken && !$service->isConfigured()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Google Service Account credentials are not yet configured in environment variables (GOOGLE_SERVICE_ACCOUNT_JSON or GOOGLE_SERVICE_ACCOUNT_EMAIL + GOOGLE_PRIVATE_KEY).',
+                'message' => 'Please connect your Google Account or configure Google Service Account credentials.',
                 'needs_config' => true,
             ], 422);
         }
 
         try {
-            $shareEmail = $request->input('share_email') ?: auth()->user()->email;
-            $result = $service->executeBackup($shareEmail);
+            $shareEmail = $request->input('share_email') ?: (session('google_user_email') ?: auth()->user()->email);
+            $result = $service->executeBackup($shareEmail, $userToken);
 
             return response()->json($result);
         } catch (\Throwable $e) {

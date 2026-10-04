@@ -102,7 +102,7 @@ class BackupTest extends TestCase
 
         $mockService = $this->mock(GoogleDriveBackupService::class);
         $mockService->shouldReceive('isConfigured')->once()->andReturn(true);
-        $mockService->shouldReceive('executeBackup')->once()->with($user->email)->andReturn([
+        $mockService->shouldReceive('executeBackup')->once()->with($user->email, null)->andReturn([
             'success' => true,
             'folder_id' => 'mock_folder_123',
             'folder_name' => 'Marsha Security Backup - 2026-10-04 13:00',

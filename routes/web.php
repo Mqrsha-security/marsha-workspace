@@ -48,6 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/backup/status', [\App\Http\Controllers\BackupController::class, 'status'])->name('backup.status');
     Route::post('/backup/google-drive', [\App\Http\Controllers\BackupController::class, 'execute'])->name('backup.googleDrive');
     Route::get('/backup/download', [\App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
+    Route::get('/backup/google/connect', [\App\Http\Controllers\BackupController::class, 'connectGoogle'])->name('backup.google.connect');
+    Route::get('/backup/google/callback', [\App\Http\Controllers\BackupController::class, 'googleCallback'])->name('backup.google.callback');
+    Route::post('/backup/google/disconnect', [\App\Http\Controllers\BackupController::class, 'disconnectGoogle'])->name('backup.google.disconnect');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

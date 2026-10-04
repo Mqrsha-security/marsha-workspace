@@ -36,6 +36,9 @@ return [
     ],
 
     'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_REDIRECT_URI', 'https://marsha-workspace-two.vercel.app/backup/google/callback'),
         'service_account_json' => env('GOOGLE_SERVICE_ACCOUNT_JSON'),
         'service_account_email' => env('GOOGLE_SERVICE_ACCOUNT_EMAIL'),
         'private_key' => env('GOOGLE_PRIVATE_KEY'),
