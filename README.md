@@ -1,47 +1,30 @@
 # Marsha Security Workspace
 
-Project coordination and security engineering workspace for Aditya Rahman and Fahristi Dewi Khadijah. Built on Laravel, Inertia, React, and Tailwind CSS.
+Internal operations workspace for Aditya Rahman and Fahristi Dewi Khadijah. Built on Laravel 11, Inertia.js, React 19, and Tailwind CSS.
 
-## Identity and Access
+## Team
 
-The platform operates under closed internal authentication. Public registration is disabled.
+- **Aditya Rahman** — Security Architect (infrastructure hardening, vulnerability assessment, threat modeling)
+- **Fahristi Dewi Khadijah** — Project Manager (milestones, task coordination, sprint tracking)
 
-### Team Members
+Access is restricted to internal team accounts. Public registration is disabled. Sessions persist for 7 days.
 
-• Aditya Rahman
-Role: Security Architect
-Responsibility: Application security architecture, vulnerability assessment, threat modeling, and infrastructure security protocols.
+## Features
 
-• Fahristi Dewi Khadijah
-Responsibility: Project orchestration, timeline coordination, and systems execution.
+### Tasks and Workstreams
+Tasks break down into UI, Code, and Design tabs with reference links and progress logs. Only the assigned owner can change task status or details. Other members can follow along and post comments.
 
-### Credentials
+Tasks move through four stages:
+- Todo
+- In Progress
+- Revisi (requires a revision note)
+- Done (logs the completion timestamp)
 
-• Security Architect: marshaSec@adit.ta
-• Project Operations: marshaSec@risti.ta
+### Meetings and Notes
+Meeting agendas capture attendees, agenda points, links, and action items. The notes module links directly to specific meetings to track decisions and follow-ups.
 
-Sessions remain active for seven days with automatic persistent session recovery.
+### Real-Time Presence and Pixel Office
+Tabs ping `/presence/ping` every 6 seconds. When a tab closes or hides, an instant beacon marks the user offline. A retro 8-bit canvas displays desk status (working or away) and runs shared office dialogue when both members are online.
 
-## Core Capabilities
-
-### Task Management and Workstreams
-
-Tasks contain modular workstreams separating user interface, programming, and design deliverables. Assignees document technical progress items and attach reference links directly within each tab.
-
-### State Transitions
-
-Assignees control task progress across four states:
-• Todo
-• In Progress
-• In Revision
-• Completed
-
-Revision requests require actionable documentation. Completion timestamps log automatically upon task resolution.
-
-### Assignee Authorization
-
-Task modification permissions strictly belong to the designated assignee. Team members can view all tasks and participate in technical discussion threads without altering task parameters.
-
-### Teams Directory
-
-A dedicated team directory provides full visibility into core contributors, task volume metrics, and active project responsibilities.
+### Backups
+The workspace exports all data (tasks, meetings, notes, apps, and users) either directly to Google Drive as formatted Google Docs, or as a downloadable ZIP package containing HTML summaries and raw JSON.
