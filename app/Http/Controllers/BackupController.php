@@ -151,13 +151,8 @@ class BackupController extends Controller
     {
         $timestamp = Carbon::now('Asia/Jakarta')->format('Y-m-d_His');
         $zipFileName = "marsha_workspace_backup_{$timestamp}.zip";
-        $tempDir = storage_path('app/temp_backup');
-
-        if (!file_exists($tempDir)) {
-            mkdir($tempDir, 0755, true);
-        }
-
-        $zipPath = "{$tempDir}/{$zipFileName}";
+        $tempDir = sys_get_temp_dir();
+        $zipPath = $tempDir . DIRECTORY_SEPARATOR . $zipFileName;
         $zip = new ZipArchive();
 
         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
